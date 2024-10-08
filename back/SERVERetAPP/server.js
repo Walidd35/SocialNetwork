@@ -1,5 +1,7 @@
 const http = require('http');
-const app = require('./app'); 
+const app = require('./app');
+const dbConfig = require('../configbdd/db'); 
+const { User, Posts, Comments, Roles } = require('../models/index'); 
 
 // Je normalise le port
 const normalizePort = (val) => {
@@ -15,6 +17,9 @@ const normalizePort = (val) => {
 
 const port = normalizePort(process.env.PORT || '3000'); // Je définit le port
 app.set('port', port); // Je définit le port dans l'application Express
+
+// Je crée le serveur HTTP avec l'application Express
+const server = http.createServer(app);
 
 // Gestion des erreurs
 const errorHandler = (error) => {
@@ -39,18 +44,26 @@ const errorHandler = (error) => {
     }
 };
 
-// Je crée le serveur HTTP avec l'application Express
-const server = http.createServer(app);
-server.on('error', errorHandler);
+// Synchronisation des modèles avec la base de données
+dbConfig.sync({ force: false }) 
+  .then(() => {
+    console.log('Tables synchronisées avec succès');
 
-// Événement d'écoute
-server.on('listening', () => {
-    const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-    console.log('Le serveur écoute au ' + bind); // Affiche l'adresse d'écoute
-});
+    server.on('error', errorHandler);
 
-// Je démarre le serveur
-server.listen(port);
+    // Événement d'écoute
+    server.on('listening', () => {
+        const address = server.address();
+        const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+        console.log('Le serveur écoute au ' + bind); // J'affiche l'adresse d'écoute
+    });
 
-module.exports = server; // J'exporte le serveur pour une utilisation dans d'autres fichiers
+    // Je démarre le serveur
+    server.listen(port);
+  })
+  .catch((error) => {
+    console.error('Erreur lors de la synchronisation :', error);
+  });
+
+module.exports = server; 
+

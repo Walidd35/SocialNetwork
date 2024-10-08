@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Snipet pour verifier si le serveur est fonctionnel 
 app.get('/', (req, res) => {
-    res.send('hello world');
+    res.json({message:'hello from paris'});
 });
 
 
