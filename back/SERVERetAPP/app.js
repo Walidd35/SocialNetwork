@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-
+const router = require('../routes/routes')
 
  app.use((req,res,next)=>{
     // Accéder à notre API depuis n'importe quel origine (*)/
@@ -13,6 +13,8 @@ const app = express();
 });
 
 app.use(express.json());
+
+app.use('/api', router)
 
 // Snipet pour verifier si le serveur est fonctionnel 
 app.get('/', (req, res) => {

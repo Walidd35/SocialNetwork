@@ -13,8 +13,7 @@ const Roles = sequelize.define('Roles',{
     },
 },{
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "uptdated_at"
+    underscored: false 
 });
 
 module.exports = Roles;
