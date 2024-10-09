@@ -1,3 +1,10 @@
+
+// Définit l'application Express.
+// Ajoute des en-têtes CORS pour permettre l'accès à l'API depuis différentes origines.
+// Active la gestion des requêtes JSON.
+// Utilise un routeur défini dans le fichier routes/routes.js.
+// Ajoute une route de base (/) pour tester si le serveur fonctionne.
+
 const express = require('express');
 const app = express();
 const router = require('../routes/routes')

@@ -1,3 +1,12 @@
+
+
+// Configure et démarre le serveur avec Node.js et Express.
+// Utilise le module HTTP pour créer un serveur basé sur l'application Express.
+// Gère les ports et les erreurs du serveur.
+// Charge les modèles de base de données (utilisateurs, publications, commentaires, rôles).
+
+
+
 const http = require('http');
 const app = require('./app');
 const dbConfig = require('../configbdd/db'); 

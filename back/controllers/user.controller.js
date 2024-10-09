@@ -57,6 +57,8 @@ exports.signup = async (req, res) => {
             password: hashedPassword,
         });
 
+        console.log("Utilisateur créé:", user); // Log pour voir l'utilisateur créé
+
         // Vérifie si des rôles sont spécifiés
         if (req.body.roles) {
             const roles = await Role.findAll({
@@ -70,7 +72,7 @@ exports.signup = async (req, res) => {
             res.send({ message: `Utilisateur ${req.body.email} enregistré avec succès` });
         } else {
             // Assigne le rôle par défaut
-            const defaultRole = await Role.findOne({ where: { role_name: 'user' } }); // Change 'user' par le rôle par défaut
+            const defaultRole = await Role.findOne({ where: { role_name: 'user' } }); 
             if (!defaultRole) {
                 return res.status(400).send({ message: "Le rôle par défaut n'existe pas." });
             }
@@ -78,6 +80,40 @@ exports.signup = async (req, res) => {
             res.send({ message: "Utilisateur enregistré avec succès !" });
         }
     } catch (err) {
+        console.error("Erreur lors de l'inscription:", err); // Log pour afficher l'erreur
         res.status(500).send({ message: err.message });
+    }
+};
+
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Recherche de l'utilisateur par email
+        const user = await User.findOne({ where: { email } });
+
+        console.log("Utilisateur trouvé:", user);
+
+        if (!user) {
+            return res.status(401).json({ message: 'Email ou mot de passe incorrect !' });
+        }
+
+        // Vérification du mot de passe
+        const passwordCorrect = await bcrypt.compare(password, user.password);
+
+        console.log("Mot de passe haché de l'utilisateur:", user.password);
+
+        if (!passwordCorrect) {
+            return res.status(401).json({ message: 'Email ou mot de passe incorrect !' });
+        }
+
+        // Génération du token JWT
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'safetyKeyJwt', { expiresIn: '168h' });
+
+        return res.status(200).json({ token });
+    } 
+    catch (error) {
+        console.error("Erreur lors de la connexion:", error);
+        return res.status(500).json({ error: error.message });
     }
 };
