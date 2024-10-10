@@ -18,6 +18,7 @@ exports.adminBoard = (req, res) => {
     res.status(200).send('Admin content');
 };
 
+///////////
 exports.deleteUserById = async (req, res) => {
     const userIdToDelete = req.params.id;  // Récupère l'ID dans l'URL
     console.log(`User ID reçu pour suppression: ${userIdToDelete}`);  // Affiche l'ID dans les logs
@@ -134,3 +135,30 @@ exports.getAll = async (req, res) => {
         res.status(500).json({ error: error.message }); // Renvoie une réponse d'erreur
     }
 };
+
+exports.getById = async (req, res) => {
+    console.log('Requête reçue pour obtenir un utilisateur via son ID:', req.params.id); // Log l'ID reçu
+    try {
+        // Vérifie que l'ID est bien passé dans la requête
+        if (!req.params.id) {
+            console.error('ID manquant dans la requête');
+            return res.status(400).json({ error: 'ID manquant' });
+        }
+
+        console.log('Recherche de l\'utilisateur avec ID:', req.params.id);
+        const showOneUser = await User.findByPk(req.params.id);
+
+        // Vérifie si un utilisateur a été trouvé
+        if (showOneUser) {
+            console.log(`Utilisateur trouvé:`, showOneUser);
+            return res.status(200).json(showOneUser);
+        } else {
+            console.warn('Utilisateur non trouvé avec cet ID:', req.params.id);
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
