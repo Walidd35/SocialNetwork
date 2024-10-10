@@ -18,34 +18,30 @@ exports.adminBoard = (req, res) => {
     res.status(200).send('Admin content');
 };
 
-exports.deleteUser = async (req, res) => {
-    const user_id = req.params.id;
+exports.deleteUserById = async (req, res) => {
+    const userIdToDelete = req.params.id;  // Récupère l'ID dans l'URL
+    console.log(`User ID reçu pour suppression: ${userIdToDelete}`);  // Affiche l'ID dans les logs
 
     try {
-        const user = await User.findByPk(user_id);
+        // Vérifie si l'utilisateur existe avant de le supprimer
+        const user = await User.findOne({ where: { user_id: userIdToDelete } });
         if (!user) {
-            return res.status(404).send({
-                message: `Utilisateur avec l'id=${user_id} n'existe pas.`,
-            });
+            console.log("Utilisateur non trouvé");
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
 
-        const num = await User.destroy({
-            where: { user_id: user_id },
-        });
+        // Supprime l'utilisateur
+        const deleteUser = await User.destroy({ where: { user_id: userIdToDelete } });
+        console.log(`Suppression effectuée: ${deleteUser}`);
 
-        if (num === 1) {
-            res.send({
-                message: "Utilisateur supprimé avec succès !",
-            });
+        if (deleteUser) {
+            return res.status(204).json({message: "Utilisateur supprimer avec succès"}); 
         } else {
-            res.send({
-                message: `Ne peut être supprimé avec cet id=${user_id}.`,
-            });
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
-    } catch (err) {
-        res.status(500).send({
-            message: "Erreur lors de la suppression de l'utilisateur avec l'id=" + user_id,
-        });
+    } catch (error) {
+        console.error("Erreur lors de la suppression:", error);
+        return res.status(500).json({ error: error.message });
     }
 };
 
@@ -115,5 +111,26 @@ exports.login = async (req, res) => {
     catch (error) {
         console.error("Erreur lors de la connexion:", error);
         return res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getAll = async (req, res) => {
+    console.log('Requête reçue pour obtenir tous les utilisateurs'); // Log initial
+    try {
+        const showUser = await User.findAll(); // Récupération des utilisateurs
+        console.log(`Nombre d'utilisateurs récupérés: ${showUser.length}`); // Log le nombre d'utilisateurs
+
+        // Si showUser est vide, log supplémentaire
+        if (showUser.length === 0) {
+            console.log('Aucun utilisateur trouvé dans la base de données.');
+        } else {
+            console.log('Utilisateurs:', JSON.stringify(showUser, null, 2)); 
+        }
+
+        res.status(200).json(showUser); // Renvoie la liste des utilisateurs
+        console.log('Réponse envoyée'); // Log après avoir envoyé la réponse
+    } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs:", error); // Log l'erreur
+        res.status(500).json({ error: error.message }); // Renvoie une réponse d'erreur
     }
 };

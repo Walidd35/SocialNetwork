@@ -4,9 +4,11 @@ const router = express.Router()
 
 const userCtrl = require('../controllers/user.controller');
 
-router.post('/signup', userCtrl.signup)
-router.post('/login', userCtrl.login )
+// Route pour le modèle User
 
-
+router.delete('/user/:id', userCtrl.deleteUserById);
+router.post('/signup', userCtrl.signup);
+router.post('/login', userCtrl.login );
+router.get('/users', userCtrl.getAll);
 
 module.exports = router;
