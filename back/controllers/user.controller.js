@@ -83,7 +83,16 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
+        // Log des données envoyées
+        console.log("Données reçues :", req.body);
+
         const { email, password } = req.body;
+
+        // Vérifier si les données sont présentes
+        if (!email || !password) {
+            console.log("Email ou mot de passe manquant");
+            return res.status(400).json({ message: 'Email et mot de passe sont requis' });
+        }
 
         // Recherche de l'utilisateur par email
         const user = await User.findOne({ where: { email } });
@@ -104,11 +113,14 @@ exports.login = async (req, res) => {
         }
 
         // Génération du token JWT
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'safetyKeyJwt', { expiresIn: '168h' });
+        const token = jwt.sign(
+            { userId: user.id },
+            process.env.JWT_SECRET || 'safetyKeyJwt', // Remplacer par la vraie clé secrète
+            { expiresIn: '168h' } // Expire en 7 jours
+        );
 
         return res.status(200).json({ token });
-    } 
-    catch (error) {
+    } catch (error) {
         console.error("Erreur lors de la connexion:", error);
         return res.status(500).json({ error: error.message });
     }
