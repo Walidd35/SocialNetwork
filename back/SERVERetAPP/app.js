@@ -5,7 +5,7 @@ const router = require('../routes/routes')
 // Middleware pour afficher les logs des requêtes
 app.use((req, res, next) => {
     console.log(`Requête reçue avec la méthode: ${req.method}, à l'URL: ${req.url}`);
-    next(); // Passe à l'étape suivante
+    next(); 
 });
 
 app.use((req, res, next) => {

@@ -1,26 +1,46 @@
 const jwt = require('jsonwebtoken');
-const safetyKeyJwt = process.env.JWT_SECRET; 
+
+// Utilisation de la clé JWT de l'environnement ou valeur par défaut
+const safetyKeyJwt = process.env.JWT_SECRET || 'safetyKeyJwt'; 
 
 module.exports = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-
-        // Vérifie que le token existe
-        if (!token) {
-            return res.status(401).json({ error: 'Token manquant !' });
+        // Vérification de l'existence de l'en-tête Authorization
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'Accès refusé, token manquant ou mal formaté.' });
         }
 
-        // Vérifie et décode le token
-        const decodedToken = jwt.verify(token, safetyKeyJwt);
-        const userId = decodedToken.userId; // Corrected from user_id to userId
+        // Extraction du token du header Authorization (format: "Bearer <token>")
+        const token = authHeader.split(' ')[1];
 
-        // Ajoute l'identifiant utilisateur à la requête
+        // Vérification du token JWT avec la clé secrète
+        const decodedToken = jwt.verify(token, safetyKeyJwt);  // Utilisation de la clé correcte
+
+        // Extraction de l'ID utilisateur à partir du token décodé
+        const userId = decodedToken.userId;
+
+        // Ajout de l'ID utilisateur à req.auth pour les requêtes futures
         req.auth = {
-            userId: userId // Use the correctly defined userId
+            userId: userId
         };
 
+        // Passage au middleware ou route suivant
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Requête invalide !' }); // Updated the error message
+        // Gestion d'erreurs : token manquant ou invalide
+        let message = 'Token invalide ou manquant.';
+        
+        // Déterminer le type d'erreur JWT et retourner un message plus spécifique
+        if (error.name === 'TokenExpiredError') {
+            message = 'Le token a expiré.';
+        } else if (error.name === 'JsonWebTokenError') {
+            message = 'Le token est invalide.';
+        } else if (error.name === 'NotBeforeError') {
+            message = 'Le token n\'est pas encore valide.';
+        }
+
+        // Retourner un message d'erreur avec le type d'erreur spécifique
+        res.status(401).json({ message, error: error.message });
     }
 };

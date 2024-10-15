@@ -18,7 +18,6 @@ exports.adminBoard = (req, res) => {
     res.status(200).send('Admin content');
 };
 
-///////////
 exports.deleteUserById = async (req, res) => {
     const userIdToDelete = req.params.id;  // Récupère l'ID dans l'URL
     console.log(`User ID reçu pour suppression: ${userIdToDelete}`);  // Affiche l'ID dans les logs
@@ -36,7 +35,7 @@ exports.deleteUserById = async (req, res) => {
         console.log(`Suppression effectuée: ${deleteUser}`);
 
         if (deleteUser) {
-            return res.status(204).json({message: "Utilisateur supprimer avec succès"}); 
+            return res.status(200).json({message: "Utilisateur supprimer avec succès"}); 
         } else {
             return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
@@ -128,8 +127,8 @@ exports.getAll = async (req, res) => {
             console.log('Utilisateurs:', JSON.stringify(showUser, null, 2)); 
         }
 
-        res.status(200).json(showUser); // Renvoie la liste des utilisateurs
-        console.log('Réponse envoyée'); // Log après avoir envoyé la réponse
+        res.status(200).json(showUser); 
+        console.log('Réponse envoyée'); 
     } catch (error) {
         console.error("Erreur lors de la récupération des utilisateurs:", error); // Log l'erreur
         res.status(500).json({ error: error.message }); // Renvoie une réponse d'erreur
