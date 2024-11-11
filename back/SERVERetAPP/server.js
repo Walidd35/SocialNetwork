@@ -1,16 +1,15 @@
 
-
+require('dotenv').config();
 // Configure et démarre le serveur avec Node.js et Express.
 // Utilise le module HTTP pour créer un serveur basé sur l'application Express.
 // Gère les ports et les erreurs du serveur.
 // Charge les modèles de base de données (utilisateurs, publications, commentaires, rôles).
 
-
-
 const http = require('http');
 const app = require('./app');
 const dbConfig = require('../configbdd/db'); 
 const { User, Posts, Comments, Roles } = require('../models/index'); 
+const sequelize = require('../configbdd/db');
 
 // Je normalise le port
 const normalizePort = (val) => {
@@ -74,5 +73,14 @@ dbConfig.sync({ force: false })
     console.error('Erreur lors de la synchronisation :', error);
   });
 
+// Test la connexion grâce a la fonction authenticate
+sequelize.authenticate()
+  .then(() => {
+    console.log('Connexion à la base de données réussie.');
+  })
+  .catch(err => {
+    console.error('Impossible de se connecter à la base de données :', err);
+  });
+  
 module.exports = server; 
 

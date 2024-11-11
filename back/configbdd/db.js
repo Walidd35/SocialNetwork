@@ -10,13 +10,4 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   port: process.env.DB_PORT || 3306
 });
 
-// Test la connexion grâce a la fonction authenticate
-sequelize.authenticate()
-  .then(() => {
-    console.log('Connexion à la base de données réussie.');
-  })
-  .catch(err => {
-    console.error('Impossible de se connecter à la base de données :', err);
-  });
-
 module.exports = sequelize;
