@@ -20,14 +20,34 @@ User.belongsToMany(Roles, {
     as: "roles"
     });
 
- // Liaison User à Posts (ONE-TO-MANY)
- Posts.belongsTo(User, { foreignKey: 'user_id' });
 
- // Liaison User à Comments (ONE-TO-MANY)
- Comments.belongsTo(User, { foreignKey: 'user_id' });
+    // Relation avec Posts : Un utilisateur peut avoir plusieurs publications
+User.hasMany(Posts, { foreignKey: 'user_id' });
 
- // Liaison Posts à Comments (ONE-TO-MANY)
- Comments.belongsTo(Posts, { foreignKey: 'post_id' });
+// Relation avec Comments : Un utilisateur peut avoir plusieurs commentaires
+User.hasMany(Comments, { foreignKey: 'user_id' });
+
+// Relation avec User : Une publication appartient à un utilisateur
+Posts.belongsTo(User, { foreignKey: 'user_id' });
+
+// Relation avec Comments : Une publication peut avoir plusieurs commentaires
+Posts.hasMany(Comments, { foreignKey: 'post_id' });
+
+// Relation avec User : Un commentaire appartient à un utilisateur
+Comments.belongsTo(User, { foreignKey: 'user_id' });
+
+// Relation avec Post : Un commentaire appartient à une publication
+Comments.belongsTo(Posts, { foreignKey: 'post_id' });
+
+
+//  // Liaison User à Posts (ONE-TO-MANY)
+//  Posts.belongsTo(User, { foreignKey: 'user_id' });
+
+//  // Liaison User à Comments (ONE-TO-MANY)
+//  Comments.belongsTo(User, { foreignKey: 'user_id' });
+
+//  // Liaison Posts à Comments (ONE-TO-MANY)
+//  Comments.belongsTo(Posts, { foreignKey: 'post_id' });
 
  ROLES = ["user","admin"];
 
