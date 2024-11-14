@@ -25,3 +25,12 @@ exports.createPost = async (req, res) => {
     }
   };
   
+  exports.getAllPosts = async (req,res) => {
+    try{
+      const posts = await Post.findAll();
+      res.status(200).json(posts);     
+    } catch (error){
+           console.error('Erreur lors de la récuperation des publications :', error);
+           res.status(500).json({error: 'Erreur lors de la récuperation des posts !'})
+    }
+  };

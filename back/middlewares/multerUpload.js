@@ -1,16 +1,17 @@
 const multer = require('multer');
 const path = require('path');
 
-// Définir le stockage des fichiers (ici dans le dossier 'uploads')
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Dossier de destination
-  },
-  filename: (req, file, cb) => {
-    // Générer un nom de fichier unique
-    cb(null, Date.now() + path.extname(file.originalname)); // Ajouter un timestamp pour éviter les conflits
-  }
-});
+// Définir le stockage des fichiers (ici dans le dossier 'uploads')const storage = multer.diskStorage({
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, '..', 'serveretapp', 'uploads')); // Accès au bon dossier
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
+    }
+  });
+  
+  
 
 // Créer une instance de multer avec les options de stockage
 const upload = multer({

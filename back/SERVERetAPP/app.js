@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const router = require('../routes/routes')
+const path = require('path');
+const fs = require('fs');
 
 // Middleware pour afficher les logs des requêtes
 app.use((req, res, next) => {
@@ -14,6 +16,16 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
+
+
+
+// Vérifier et créer le dossier "uploads" s'il n'existe pas
+
+const uploadDir = path.join(__dirname, '..', 'serveretapp', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 
 app.use(express.json());
 

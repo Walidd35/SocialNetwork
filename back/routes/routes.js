@@ -14,4 +14,5 @@ router.get('/user/:id', userCtrl.getById);
 
 // Route pour le modèle Post
 router.post('/posts', upload.single('image'), postCtrl.createPost);
+router.get("/allposts",postCtrl.getAllPosts )
 module.exports = router;
