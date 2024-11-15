@@ -5,7 +5,7 @@ const Role = require('../models/roles.model');
 const Op = config.Sequelize.Op;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const safetyKeyJwt = process.env.JWT_SECRET;
 exports.allAccess = async (req, res) => {
     res.status(200).send('public content');
 };
@@ -47,15 +47,24 @@ exports.deleteUserById = async (req, res) => {
 
 exports.signup = async (req, res) => {
     try {
+        // Vérifie si l'email existe déjà
+        const existingUser = await User.findOne({ where: { email: req.body.email } });
+        if (existingUser) {
+            return res.status(400).send({ message: "Cet email est déjà utilisé." });
+        }
+
+        // Hashage du mot de passe
         const hashedPassword = await bcrypt.hash(req.body.password, 8);
+
+        // Création de l'utilisateur
         const user = await User.create({
             email: req.body.email,
             password: hashedPassword,
         });
 
-        console.log("Utilisateur créé:", user); // Log pour voir l'utilisateur créé
+        console.log("Utilisateur créé:", user);
 
-        // Vérifie si des rôles sont spécifiés
+        // Gestion des rôles
         if (req.body.roles) {
             const roles = await Role.findAll({
                 where: {
@@ -65,66 +74,74 @@ exports.signup = async (req, res) => {
                 },
             });
             await user.setRoles(roles);
-            res.send({ message: `Utilisateur ${req.body.email} enregistré avec succès` });
+            res.send({ message: `Utilisateur ${req.body.email} enregistré avec succès avec les rôles spécifiés.` });
         } else {
-            // Assigne le rôle par défaut
-            const defaultRole = await Role.findOne({ where: { role_name: 'user' } }); 
+            // Assigner un rôle par défaut
+            const defaultRole = await Role.findOne({ where: { role_name: 'user' } });
             if (!defaultRole) {
                 return res.status(400).send({ message: "Le rôle par défaut n'existe pas." });
             }
             await user.setRoles([defaultRole.role_id]);
-            res.send({ message: "Utilisateur enregistré avec succès !" });
+            res.send({ message: `Utilisateur ${req.body.email} enregistré avec succès avec le rôle par défaut.` });
         }
     } catch (err) {
-        console.error("Erreur lors de l'inscription:", err); // Log pour afficher l'erreur
-        res.status(500).send({ message: err.message });
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            res.status(400).send({ message: "Cet email est déjà utilisé." });
+        } else {
+            console.error("Erreur lors de l'inscription:", err);
+            res.status(500).send({ message: "Une erreur est survenue lors de l'inscription." });
+        }
     }
 };
 
 exports.login = async (req, res) => {
     try {
-        // Log des données envoyées
-        console.log("Données reçues :", req.body);
-
-        const { email, password } = req.body;
-
-        // Vérifier si les données sont présentes
-        if (!email || !password) {
-            console.log("Email ou mot de passe manquant");
-            return res.status(400).json({ message: 'Email et mot de passe sont requis' });
-        }
-
-        // Recherche de l'utilisateur par email
-        const user = await User.findOne({ where: { email } });
-
-        console.log("Utilisateur trouvé:", user);
+        const user = await User.findOne({
+            where: { email: req.body.email },
+            include: [{
+                model: Role,  // Assure-toi d'utiliser 'Roles' ici
+                as: 'roles',  // Utilisation de l'alias 'roles'
+                attributes: ['role_name'],
+                through: { attributes: [] } // Exclut les attributs de la table de jointure
+            }]
+        });
 
         if (!user) {
-            return res.status(401).json({ message: 'Email ou mot de passe incorrect !' });
+            return res.status(401).json({ message: 'Utilisateur non trouvé !' });
         }
 
-        // Vérification du mot de passe
-        const passwordCorrect = await bcrypt.compare(password, user.password);
-
-        console.log("Mot de passe haché de l'utilisateur:", user.password);
-
-        if (!passwordCorrect) {
-            return res.status(401).json({ message: 'Email ou mot de passe incorrect !' });
+        // Vérification du mot de passe (si nécessaire)
+        const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Mot de passe incorrect !' });
         }
 
-        // Génération du token JWT
+        // Extraction des noms de rôles
+        const userRoles = user.roles.map(role => role.role_name);
+
+        // Création du token JWT
         const token = jwt.sign(
-            { userId: user.id },
-            process.env.JWT_SECRET || 'safetyKeyJwt', // Remplacer par la vraie clé secrète
-            { expiresIn: '168h' } // Expire en 7 jours
+            { 
+                userId: user.id,
+                roles: userRoles // Array des noms de rôles
+            },
+            safetyKeyJwt,
+            { expiresIn: '1h' }
         );
 
-        return res.status(200).json({ token });
+        // Réponse avec l'ID utilisateur, les rôles et le token
+        res.status(200).json({
+            userId: user.id,
+            roles: userRoles,
+            token: token
+        });
+
     } catch (error) {
-        console.error("Erreur lors de la connexion:", error);
-        return res.status(500).json({ error: error.message });
+        console.error('Erreur login:', error);
+        res.status(500).json({ error: error.message });
     }
 };
+
 
 exports.getAll = async (req, res) => {
     console.log('Requête reçue pour obtenir tous les utilisateurs'); // Log initial
@@ -158,7 +175,7 @@ exports.getById = async (req, res) => {
 
         console.log('Recherche de l\'utilisateur avec ID:', req.params.id);
         const showOneUser = await User.findByPk(req.params.id);
-
+        console.log(showOneUser); 
         // Vérifie si un utilisateur a été trouvé
         if (showOneUser) {
             console.log(`Utilisateur trouvé:`, showOneUser);

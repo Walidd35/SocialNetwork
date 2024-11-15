@@ -18,14 +18,12 @@ app.use((req, res, next) => {
 });
 
 
-
 // Vérifier et créer le dossier "uploads" s'il n'existe pas
 
 const uploadDir = path.join(__dirname, '..', 'serveretapp', 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
-
 
 app.use(express.json());
 
