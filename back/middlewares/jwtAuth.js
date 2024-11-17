@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
         const userId = decodedToken.userId;
         const userRoles = decodedToken.roles; // Changé de role à roles
         
-        if (!userId || !userRoles) {
+        if (!userId ) {
             return res.status(400).json({ 
                 message: "Identifiant de l'utilisateur ou rôles manquants dans le token." 
             });

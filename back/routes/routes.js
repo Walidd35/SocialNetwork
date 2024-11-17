@@ -7,8 +7,6 @@ const userCtrl = require('../controllers/user.controller');
 const postCtrl = require('../controllers/post.controller');
 const upload = require('../middlewares/multerUpload');
 
-// Vérifiez que les contrôleurs sont bien définis
-console.log('postCtrl:', postCtrl); // Ajoutez ceci pour debug
 
 // Helper functions
 const getUserIdFromParams = (req) => req.params.id;

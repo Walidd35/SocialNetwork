@@ -99,10 +99,10 @@ exports.login = async (req, res) => {
         const user = await User.findOne({
             where: { email: req.body.email },
             include: [{
-                model: Role,  // Assure-toi d'utiliser 'Roles' ici
-                as: 'roles',  // Utilisation de l'alias 'roles'
+                model: Role,
+                as: 'roles',
                 attributes: ['role_name'],
-                through: { attributes: [] } // Exclut les attributs de la table de jointure
+                through: { attributes: [] }
             }]
         });
 
@@ -110,38 +110,33 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Utilisateur non trouvé !' });
         }
 
-        // Vérification du mot de passe (si nécessaire)
-        const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Mot de passe incorrect !' });
+        // Vérification du mot de passe
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
+        if (!validPassword) {
+            return res.status(401).json({ message: 'Mot de passe incorrect' });
         }
 
-        // Extraction des noms de rôles
+        // Extraction des rôles - utilisation de 'roles' au lieu de 'Roles'
         const userRoles = user.roles.map(role => role.role_name);
 
-        // Création du token JWT
+        // Création du token avec l'userId et les rôles
         const token = jwt.sign(
-            { 
-                userId: user.id,
-                roles: userRoles // Array des noms de rôles
-            },
+            { userId: user.user_id, roles: userRoles },
             safetyKeyJwt,
             { expiresIn: '1h' }
         );
 
-        // Réponse avec l'ID utilisateur, les rôles et le token
+        // Retour du token dans la réponse
         res.status(200).json({
-            userId: user.id,
+            userId: user.user_id,
             roles: userRoles,
             token: token
         });
-
     } catch (error) {
         console.error('Erreur login:', error);
         res.status(500).json({ error: error.message });
     }
 };
-
 
 exports.getAll = async (req, res) => {
     console.log('Requête reçue pour obtenir tous les utilisateurs'); // Log initial

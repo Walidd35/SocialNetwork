@@ -32,11 +32,9 @@ const  Post  = require("../models/posts.model");
       console.error('Erreur lors de la création du post :', error);
       res.status(500).json({ error: 'Erreur lors de la création du post.', details: error.message });
   }
-  };
+  };   
 
-  // post.controller.js
-
-exports.getAllPosts = async (req, res) => {
+exports.getAllPosts = async (req, res) => { 
   try {
       const posts = await Post.findAll();
       res.status(200).json(posts);
@@ -44,8 +42,25 @@ exports.getAllPosts = async (req, res) => {
       console.error('Erreur lors de la récupération des posts:', error);
       res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des posts.' });
   }
-};
+  };
 
+exports.getPostById = async (req, res) => {
+  try {
+    // Récupération de la publication par son ID
+    const post = await Post.findByPk(req.params.id);
+
+    // Vérification si la publication existe
+    if (!post) {
+      return res.status(404).json({ error: 'Publication non trouvée.' });
+    }
+
+    // Réponse avec la publication trouvée
+    res.status(200).json(post);
+  } catch (error) {
+    console.error('Erreur lors de la récupération de la publication :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération de la publication.' });
+  }
+  };
 
   exports.updatePost = async (req,res) => {
     try{
