@@ -6,6 +6,7 @@ const Op = config.Sequelize.Op;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const safetyKeyJwt = process.env.JWT_SECRET;
+
 exports.allAccess = async (req, res) => {
     res.status(200).send('public content');
 };

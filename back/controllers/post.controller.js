@@ -34,7 +34,7 @@ const  Post  = require("../models/posts.model");
   }
   };   
 
-exports.getAllPosts = async (req, res) => { 
+  exports.getAllPosts = async (req, res) => { 
   try {
       const posts = await Post.findAll();
       res.status(200).json(posts);
@@ -44,68 +44,81 @@ exports.getAllPosts = async (req, res) => {
   }
   };
 
-exports.getPostById = async (req, res) => {
-  try {
-    // Récupération de la publication par son ID
-    const post = await Post.findByPk(req.params.id);
-
-    // Vérification si la publication existe
-    if (!post) {
-      return res.status(404).json({ error: 'Publication non trouvée.' });
-    }
-
-    // Réponse avec la publication trouvée
-    res.status(200).json(post);
-  } catch (error) {
-    console.error('Erreur lors de la récupération de la publication :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération de la publication.' });
-  }
-  };
-
-  exports.updatePost = async (req,res) => {
-    try{
-       const {title, description, user_id } = req.body;
-       const imageUrl = req.file ? req.file.path : null;
-
-       const post = await Post.findByPk(req.params.id);
-         if(!post){
-            return res.status(404).json({error: 'Publication non trouvée.'})
-         }
-         if (post.user_id !== req.auth.userId) {
-          return res.status(403).json({ error: 'Accès refusé. Vous ne pouvez pas modifier cette publication.' });
+  exports.getPostById = async (req, res, next) => {
+    try {
+        // Si on appelle directement la fonction (comme middleware)
+        const postId = req.params ? req.params.id : req;
+        
+        const post = await Post.findByPk(postId);
+        
+        if (!post) {
+            if (next) {
+                return next(new Error('Post non trouvé'));
+            }
+            return null;
         }
         
-       post.title = title || post.title;
-       post.description = description || post.description;
-       post.image = imageUrl || post.image;
-       post.user_id = user_id || post.user_id;
-       
-       await post.save();
-       res.status(200).json(post);
-
+        // Si appelé comme middleware, renvoyer la réponse
+        if (res) {
+            return res.status(200).json(post);
+        }
+        // Si appelé comme fonction, renvoyer juste le post
+        return post;
+        
     } catch (error) {
-       console.error('Erreur lors de la mise a jour de la publication :', error);
-       res.status(500).json({error: 'Erreur lors de la mise a jour de la publication : ', error })
+        console.error('Erreur lors de la récupération de la publication :', error);
+        if (next) {
+            return next(error);
+        }
+        throw error;
     }
   };
 
-  exports.deletePost = async (req, res) => {
+  exports.updatePost = async (req, res) => {
     try {
-      const post = await Post.findByPk(req.params.id);
-      if (!post) {
-        return res.status(404).json({ error: 'Publication non trouvée.' });
-      }
-  
-      // Vérifiez que l'utilisateur est le propriétaire du post
-      if (post.user_id !== req.auth.userId) {
-        return res.status(403).json({ error: 'Accès refusé.' });
-      }
-  
-      await post.destroy();
-      res.status(200).json({ message: 'Publication supprimée avec succès.' });
+        const { title, description, user_id } = req.body;
+        const imageUrl = req.file ? req.file.path : null;
+
+        // Recherche de la publication par son ID
+        const post = await Post.findByPk(req.params.id);
+        if (!post) {
+            return res.status(404).json({ error: 'Publication non trouvée.' });
+        }
+
+        // Vérification des rôles et de l'utilisateur
+        if (post.user_id !== req.auth.userId && !req.auth.roles.includes('admin')) {
+            return res.status(403).json({ error: 'Accès refusé. Vous ne pouvez pas modifier cette publication.' });
+        }
+
+        // Mise à jour des champs
+        post.title = title || post.title;
+        post.description = description || post.description;
+        post.image = imageUrl || post.image;
+        post.user_id = user_id || post.user_id;  // Si un user_id est fourni, on l'applique, sinon on garde l'ancien
+
+        // Sauvegarde de la publication
+        await post.save();
+        res.status(200).json({ message: 'Publication mise à jour avec succès', post });
+
     } catch (error) {
-      console.error('Erreur lors de la suppression de la publication :', error);
-      res.status(500).json({ error: 'Erreur lors de la suppression de la publication.' });
+        console.error('Erreur lors de la mise à jour de la publication :', error);
+        res.status(500).json({ error: 'Erreur lors de la mise à jour de la publication.', details: error.message });
+    }
+};
+
+  exports.deletePost = async (req, res, next) => {
+    try {
+        const post = await Post.findByPk(req.params.id);
+        
+        if (!post) {
+            return res.status(404).json({ error: 'Publication non trouvée.' });
+        }
+        
+        await post.destroy();
+        return res.status(200).json({ message: 'Publication supprimée avec succès.' });
+        
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la publication :', error);
+        return res.status(500).json({ error: 'Erreur lors de la suppression de la publication.' });
     }
   };
-  

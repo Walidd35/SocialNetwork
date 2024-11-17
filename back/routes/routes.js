@@ -6,6 +6,7 @@ const verifyOwnership = require('../middlewares/verifyOwner');
 const userCtrl = require('../controllers/user.controller');
 const postCtrl = require('../controllers/post.controller');
 const upload = require('../middlewares/multerUpload');
+const Post = require('../models/posts.model')
 
 // Fonctions pour l'extraction des IDs
 const getIds = {
@@ -76,9 +77,9 @@ router.get('/post/:id',
     postCtrl.getPostById
 );
 
-router.put('/putpost/:id',
-    auth,
-    authorizeRoles('user', 'admin'),
+router.put('/putpost/:id', 
+    auth, 
+    authorizeRoles('user', 'admin'), 
     upload.single('image'),
     async (req, res, next) => {
         try {
@@ -86,11 +87,12 @@ router.put('/putpost/:id',
             if (!post) {
                 return res.status(404).json({ message: 'Post non trouvé' });
             }
-            // Permet à l'admin de modifier n'importe quel post et aux utilisateurs de modifier leurs propres posts
+
+            // Permet à l'admin de modifier n'importe quel post, et aux utilisateurs de modifier leurs propres posts
             if (req.auth.roles.includes('admin') || post.userId === req.auth.userId) {
                 next();
             } else {
-                res.status(403).json({ message: 'Accès non autorisé' });
+                res.status(403).json({ message: 'Accès non autorisé. Vous ne pouvez pas modifier cette publication.' });
             }
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -104,21 +106,24 @@ router.delete('/deletepost/:id',
     authorizeRoles('user', 'admin'),
     async (req, res, next) => {
         try {
-            const post = await postCtrl.getPostById(req.params.id);
+            const postId = req.params.id;
+            const post = await Post.findByPk(postId);  // Utilisation directe de findByPk
+            
             if (!post) {
                 return res.status(404).json({ message: 'Post non trouvé' });
             }
+            
             // Permet à l'admin de supprimer n'importe quel post et aux utilisateurs de supprimer leurs propres posts
             if (req.auth.roles.includes('admin') || post.userId === req.auth.userId) {
-                next();
+                return postCtrl.deletePost(req, res, next);
             } else {
-                res.status(403).json({ message: 'Accès non autorisé' });
+                return res.status(403).json({ message: 'Accès non autorisé' });
             }
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            console.error('Erreur:', error);
+            return res.status(500).json({ error: error.message });
         }
-    },
-    postCtrl.deletePost
+    }
 );
 
 module.exports = router;
