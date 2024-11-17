@@ -40,7 +40,7 @@ router.get('/user/:id',
     userCtrl.getById
 );
 
-router.delete('/users/:id',
+router.delete('/user/:id',
     auth,
     authorizeRoles('user', 'admin'),
     (req, res, next) => {
