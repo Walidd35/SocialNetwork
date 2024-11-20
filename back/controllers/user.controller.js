@@ -7,17 +7,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const safetyKeyJwt = process.env.JWT_SECRET;
 
-exports.allAccess = async (req, res) => {
-    res.status(200).send('public content');
-};
-
-exports.userBoard = async (req, res) => {
-    res.status(200).send('User content');
-};
-
-exports.adminBoard = (req, res) => {
-    res.status(200).send('Admin content');
-};
 
 exports.deleteUserById = async (req, res) => {
     const userIdToDelete = req.params.id;  // Récupère l'ID dans l'URL

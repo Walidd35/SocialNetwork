@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/jwtAuth');
-const authorizeRoles = require('../middlewares/rolesAuth');
-const verifyOwnership = require('../middlewares/verifyOwner');
+const { authorizeRoles, verifyOwnership } = require('../middlewares/rolesAuth');
 const userCtrl = require('../controllers/user.controller');
 const postCtrl = require('../controllers/post.controller');
+const cmtCtrl = require('../controllers/comment.controller')
 const upload = require('../middlewares/multerUpload');
 const Post = require('../models/posts.model')
 
@@ -18,14 +18,11 @@ const getIds = {
 // Routes Utilisateurs
 router.post('/signup', userCtrl.signup);
 router.post('/login', userCtrl.login);
-
-// Routes protégées utilisateurs
 router.get('/users', 
     auth,
     authorizeRoles('admin'),
     userCtrl.getAll
 );
-
 router.get('/user/:id',
     auth,
     authorizeRoles('user', 'admin'),
@@ -39,7 +36,6 @@ router.get('/user/:id',
     },
     userCtrl.getById
 );
-
 router.delete('/user/:id',
     auth,
     authorizeRoles('user', 'admin'),
@@ -54,7 +50,7 @@ router.delete('/user/:id',
     userCtrl.deleteUserById
 );
 
-// Routes Posts
+// Routes pour les Posts
 router.post('/posts',
     auth,
     authorizeRoles('user', 'admin'),
@@ -66,41 +62,21 @@ router.post('/posts',
     },
     postCtrl.createPost
 );
-
 router.get('/allposts',
     auth,
     postCtrl.getAllPosts
 );
-
 router.get('/post/:id',
     auth,
     postCtrl.getPostById
 );
-
 router.put('/putpost/:id', 
     auth, 
     authorizeRoles('user', 'admin'), 
     upload.single('image'),
-    async (req, res, next) => {
-        try {
-            const post = await postCtrl.getPostById(req.params.id);
-            if (!post) {
-                return res.status(404).json({ message: 'Post non trouvé' });
-            }
-
-            // Permet à l'admin de modifier n'importe quel post, et aux utilisateurs de modifier leurs propres posts
-            if (req.auth.roles.includes('admin') || post.userId === req.auth.userId) {
-                next();
-            } else {
-                res.status(403).json({ message: 'Accès non autorisé. Vous ne pouvez pas modifier cette publication.' });
-            }
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
+    verifyOwnership((req) => req.params.id, 'post'),  // Vérifie la propriété du post
     postCtrl.updatePost
-);
-
+  );
 router.delete('/deletepost/:id',
     auth,
     authorizeRoles('user', 'admin'),
@@ -126,4 +102,10 @@ router.delete('/deletepost/:id',
     }
 );
 
+// Route pour créer un commentaire sur un post
+router.post('/posts/:postId/comments', auth, cmtCtrl.createComment);
+router.get('/posts/comments',auth,cmtCtrl.getAllComments);
+router.get('/comments/:commentId',auth,cmtCtrl.getCommentById);
+router.put('/comments/modify/:commentId', auth,authorizeRoles('user', 'admin'),verifyOwnership((req) => req.params.commentId),cmtCtrl.modifyComment);
+router.delete('/comments/:commentId',auth ,authorizeRoles('user', 'admin'),verifyOwnership((req) => req.params.commentId),cmtCtrl.deleteComment);
 module.exports = router;

@@ -1,25 +1,29 @@
-const { DataTypes } = require('sequelize'); // J'importe les DataTypes depuis Sequelize .
-const sequelize = require('../configbdd/db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../configbdd/db'); // Ajustez le chemin selon votre structure
 
-// La fonction define appartient au package Sequelize. Elle permet de définir un modèle représentant une table SQL.
 const Comments = sequelize.define('Comments', {
-    comment_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true 
-    },
-    content: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-    },
-},
- {
+  comment_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  post_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
+}, {
     timestamps: true,
-    underscrored: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at"
- }
-);
+    createdAt: 'created_at',  // Personnalise le nom de la colonne
+    updatedAt: 'updated_at',  // Personnalise le nom de la colonne
+    tableName: 'Comments'
+});
 
 module.exports = Comments;

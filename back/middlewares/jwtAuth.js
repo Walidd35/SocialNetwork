@@ -12,13 +12,25 @@ module.exports = (req, res, next) => {
         const token = authHeader.split(' ')[1];
         const decodedToken = jwt.verify(token, safetyKeyJwt);
         console.log('Token décodé:', decodedToken); // Debug
-
-        if (!decodedToken.userId || !decodedToken.roles) {
+        
+        if (!Array.isArray(decodedToken.roles)) {
             return res.status(400).json({
-                message: "Identifiant de l'utilisateur ou rôles manquants dans le token."
+                message: "Les rôles dans le token ne sont pas valides."
             });
         }
-
+        
+        // if (!decodedToken.userId || !decodedToken.roles) {
+        //     return res.status(400).json({
+        //         message: "Identifiant de l'utilisateur ou rôles manquants dans le token."
+        //     });
+        // }
+        
+        if (!Array.isArray(decodedToken.roles)) {
+            return res.status(400).json({
+                message: "Les rôles dans le token ne sont pas valides."
+            });
+        }
+        
         req.auth = {
             userId: decodedToken.userId,
             roles: Array.isArray(decodedToken.roles) ? decodedToken.roles : [decodedToken.roles]
