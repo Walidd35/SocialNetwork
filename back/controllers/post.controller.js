@@ -74,9 +74,10 @@ const  Post = require("../models/posts.model");
     }
   };
 
-  exports.updatePost = async (req, res) => {
+exports.updatePost = async (req, res) => {
+
     try {
-        const { title, description, user_id } = req.body;
+        const { title, description } = req.body;
         const imageUrl = req.file ? req.file.path : null;
 
         // Recherche de la publication par son ID
@@ -94,7 +95,8 @@ const  Post = require("../models/posts.model");
         post.title = title || post.title;
         post.description = description || post.description;
         post.image = imageUrl || post.image;
-        post.user_id = user_id || post.user_id;  // Si un user_id est fourni, on l'applique, sinon on garde l'ancien
+        // Ne pas changer le user_id, car un utilisateur ne peut pas changer l'auteur du post
+        // post.user_id = user_id || post.user_id;  // Cette ligne est supprimée
 
         // Sauvegarde de la publication
         await post.save();
