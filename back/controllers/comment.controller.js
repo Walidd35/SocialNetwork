@@ -98,7 +98,7 @@ exports.getCommentById = async (req,res) => {
         include:[
           {
             model:User,
-            attributes: ['user_id','email'],
+            attributes: ['username','email'],
           },
           {
             model:Post,
@@ -131,72 +131,87 @@ exports.modifyComment = async (req, res) => {
   try {
     const { content } = req.body;
     const { commentId } = req.params;
-    const userId = req.auth.userId; // Utiliser l'ID de l'utilisateur authentifié
+    const userId = req.auth.userId; // L'utilisateur connecté
 
-    // Trouver le commentaire avec les relations nécessaires
+    // Rechercher le commentaire
     const comment = await Comment.findOne({
       where: { comment_id: commentId },
-      include: [{
-        model: Post,
-        attributes: ['user_id'] // Pour vérifier le propriétaire du post
-      }]
+      include: [{ model: Post, attributes: ['user_id'] }] // Inclure le Post pour vérifier l'auteur
     });
 
-    // Vérifications
+    // Vérifier si le commentaire existe
     if (!comment) {
       return res.status(404).json({ message: "Commentaire non trouvé" });
     }
 
-    // Vérifier que l'utilisateur est soit l'auteur du commentaire, soit un admin
+    // Vérification des droits
     const isAdmin = req.auth.roles.includes('admin');
-    const isAuthor = comment.user_id === userId;
-    
+    const isAuthor = comment.user_id === userId; // Auteur du commentaire
+
     if (!isAdmin && !isAuthor) {
-      return res.status(403).json({ 
-        message: "Vous n'êtes pas autorisé à modifier ce commentaire" 
+      return res.status(403).json({
+        message: "Vous n'êtes pas autorisé à modifier ce commentaire",
       });
     }
 
-    // Validation du contenu
+    // Vérification du contenu
     if (!content || content.trim().length === 0) {
-      return res.status(400).json({ 
-        message: "Le contenu du commentaire ne peut pas être vide" 
+      return res.status(400).json({
+        message: "Le contenu du commentaire ne peut pas être vide",
       });
     }
 
     // Mise à jour du commentaire
     await comment.update({
       content: content.trim(),
-      updated_at: new Date()
+      updated_at: new Date(),
     });
 
-    res.status(200).json({ 
+    res.status(200).json({
       message: "Commentaire modifié avec succès",
       comment: {
         id: comment.comment_id,
         content: comment.content,
-        updated_at: comment.updated_at
-      }
+        updated_at: comment.updated_at,
+      },
     });
-
   } catch (error) {
     console.error("Erreur lors de la modification du commentaire:", error);
-    res.status(500).json({ 
-      message: "Une erreur est survenue lors de la modification du commentaire" 
+    res.status(500).json({
+      message: "Une erreur est survenue lors de la modification du commentaire",
     });
   }
 };
 
 exports.deleteComment = async (req, res) => {
   try {
-      const comment = await Comment.findByPk(req.params.commentId);
+      const { commentId } = req.params;
+      const userId = req.auth.userId;
+      const userRoles = req.auth.roles;
+
+      // Rechercher le commentaire avec son auteur
+      const comment = await Comment.findOne({
+          where: { comment_id: commentId },
+          include: [{ model: Post, attributes: ['user_id'] }]
+      });
 
       if (!comment) {
           return res.status(404).json({ error: 'Commentaire non trouvé.' });
       }
 
+      // Vérification des droits
+      const isAdmin = userRoles.includes('admin');
+      const isCommentAuthor = comment.user_id === userId;
+
+      if (!isAdmin && !isCommentAuthor) {
+          return res.status(403).json({ 
+              error: 'Vous n\'êtes pas autorisé à supprimer ce commentaire.' 
+          });
+      }
+
       await comment.destroy();
       res.status(200).json({ message: 'Commentaire supprimé avec succès.' });
+
   } catch (error) {
       console.error('Erreur lors de la suppression du commentaire :', error);
       res.status(500).json({ error: 'Erreur serveur lors de la suppression.' });

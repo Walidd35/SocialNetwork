@@ -1,7 +1,7 @@
 const  Post = require("../models/posts.model");
+const User = require('../models/users.model');
 
-
-  exports.createPost = async (req, res) => {
+ exports.createPost = async (req, res) => {
   try {
       const { title, description } = req.body;
       const imageUrl = req.file ? req.file.path : null;
@@ -23,7 +23,8 @@ const  Post = require("../models/posts.model");
           title,
           description,
           image: imageUrl,
-          user_id, // Lier le user_id au post
+          user_id,
+           // Lier le user.Id au post
       });
 
       // Réponse avec le post créé
@@ -34,15 +35,35 @@ const  Post = require("../models/posts.model");
   }
   };   
 
-  exports.getAllPosts = async (req, res) => { 
-  try {
-      const posts = await Post.findAll();
-      res.status(200).json(posts);
-  } catch (error) {
-      console.error('Erreur lors de la récupération des posts:', error);
-      res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des posts.' });
-  }
-  };
+
+//   try {
+//       const posts = await Post.findAll();
+//       res.status(200).json(posts);
+//   } catch (error) {
+//       console.error('Erreur lors de la récupération des posts:', error);
+//       res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des posts.' });
+//   }
+//   };
+exports.getAllPosts = async (req, res) => { 
+    try {
+        // Récupère tous les posts et convertit les instances Sequelize en objets simples
+        const posts = await Post.findAll({
+            include: [
+                {
+                    model: User,   // Inclure la table User
+                    attributes: ['username']  // Sélectionner seulement le username
+                }
+            ]
+        });
+        const plainPosts = posts.map(post => post.toJSON());  // Conversion des objets Sequelize en objets JavaScript simples
+
+        // Envoie les posts dans la réponse
+        res.status(200).json(plainPosts);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des posts:', error);
+        res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des posts.' });
+    }
+};
 
   exports.getPostById = async (req, res, next) => {
     try {
@@ -53,7 +74,8 @@ const  Post = require("../models/posts.model");
         
         if (!post) {
             if (next) {
-                return next(new Error('Post non trouvé'));
+                // return next(new Error('Post non trouvé'));
+                return res.status(404).json({message:"Post non disponible"})
             }
             return null;
         }

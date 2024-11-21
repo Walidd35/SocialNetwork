@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const router = require('../routes/routes')
+const router = require('../routes/routes');
 const path = require('path');
 const fs = require('fs');
 
@@ -9,6 +9,10 @@ app.use((req, res, next) => {
     console.log(`Requête reçue avec la méthode: ${req.method}, à l'URL: ${req.url}`);
     next(); 
 });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

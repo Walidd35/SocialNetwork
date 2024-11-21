@@ -21,8 +21,8 @@ const Comments = sequelize.define('Comments', {
   }
 }, {
     timestamps: true,
-    createdAt: 'created_at',  // Personnalise le nom de la colonne
-    updatedAt: 'updated_at',  // Personnalise le nom de la colonne
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',  
     tableName: 'Comments'
 });
 
