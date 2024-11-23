@@ -22,7 +22,15 @@ const Posts = sequelize.define('Posts', {
         type: DataTypes.TEXT, // J'utilise DataTypes.TEXT pour des desriptions longues .
         allowNull: false
        },
-},{
+       user_id: { // Ajout du champ user_id dans le modèle
+        type: DataTypes.INTEGER,
+        allowNull: true, // Correspond à "YES" dans votre schéma
+        references: {
+            model: 'Users', // Nom de la table des utilisateurs
+            key: 'user_id', // Nom de la clé primaire dans Users
+        },
+}}
+,{
     timestamps: true, 
     createdAt: 'created_at',
     updatedAt: 'uptdated_at'

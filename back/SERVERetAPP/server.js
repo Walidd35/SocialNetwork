@@ -8,7 +8,7 @@ require('dotenv').config();
 const http = require('http');
 const app = require('./app');
 const dbConfig = require('../configbdd/db'); 
-const { User, Posts, Comments, Roles } = require('../models/index'); 
+
 const sequelize = require('../configbdd/db');
 
 // Je normalise le port
