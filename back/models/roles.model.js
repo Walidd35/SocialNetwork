@@ -4,6 +4,7 @@ const sequelize = require('../configbdd/db') // J'importe l'instance Sequelize d
 const Roles = sequelize.define('Roles',{
     role_id: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         primaryKey: true,
         autoIncrement:true,
     },
@@ -15,5 +16,8 @@ const Roles = sequelize.define('Roles',{
     timestamps: true,
     underscored: false 
 });
+
+
+
 
 module.exports = Roles;

@@ -8,17 +8,20 @@ const Comments = require('../models/comments.model');
 
 // Liaison Role à User (MANY-TO-MANY)
 
+
 Roles.belongsToMany(User, {
     through: "user_roles",
     foreignKey: "role_id",
     otherKey: "user_id"
-    });
+});
+
+
 User.belongsToMany(Roles, {
     through: "user_roles",
     foreignKey: "user_id",
     otherKey: "role_id",
-    as: "roles"
-    });
+    as: "roles" // Cet alias doit correspondre à celui utilisé dans la requête
+});
 
 
     // Relation avec Posts : Un utilisateur peut avoir plusieurs publications
@@ -40,14 +43,7 @@ Comments.belongsTo(User, { foreignKey: 'user_id' });
 Comments.belongsTo(Posts, { foreignKey: 'post_id' });
 
 
-//  // Liaison User à Posts (ONE-TO-MANY)
-//  Posts.belongsTo(User, { foreignKey: 'user_id' });
 
-//  // Liaison User à Comments (ONE-TO-MANY)
-//  Comments.belongsTo(User, { foreignKey: 'user_id' });
-
-//  // Liaison Posts à Comments (ONE-TO-MANY)
-//  Comments.belongsTo(Posts, { foreignKey: 'post_id' });
 
  ROLES = ["user","admin"];
 

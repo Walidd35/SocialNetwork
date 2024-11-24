@@ -8,12 +8,7 @@ const cmtCtrl = require('../controllers/comment.controller')
 const upload = require('../middlewares/multerUpload');
 const Post = require('../models/posts.model')
 const Comments = require('../models/comments.model')
-// Fonctions pour l'extraction des IDs
-const getIds = {
-    fromParams: (req) => req.params.id,
-    fromBody: (req) => req.body.userId,
-    fromAuth: (req) => req.auth.userId
-};
+
 
 // Routes Utilisateurs
 router.post('/signup', userCtrl.signup);
@@ -50,6 +45,7 @@ router.delete('/user/:id',
     userCtrl.deleteUserById
 );
 
+
 // Routes pour les Posts
 router.post('/post',
     auth,
@@ -77,7 +73,7 @@ router.put(
       return await Post.findByPk(req.params.id); // Assure de vérifier le post par ID
     }),
     postCtrl.updatePost
-  ); 
+); 
 router.delete('/deletepost/:id', auth, authorizeRoles('user', 'admin'), async (req, res, next) => {
     try {
       const postId = req.params.id;
@@ -103,8 +99,9 @@ router.delete('/deletepost/:id', auth, authorizeRoles('user', 'admin'), async (r
       console.error('Erreur lors de la suppression du post :', error);
       return res.status(500).json({ error: 'Erreur lors de la suppression du post.' });
     }
-  });
+});
   
+
 // Route pour créer un commentaire sur un post
 router.post('/posts/:postId/comments', auth, cmtCtrl.createComment);
 router.get('/allcomments',auth,cmtCtrl.getAllComments);
@@ -116,7 +113,11 @@ router.put(
       return await Comments.findByPk(req.params.commentId); // Recherche le commentaire
     }),
     cmtCtrl.modifyComment
-  );
+);
 router.delete('/comments/:commentId',auth ,authorizeRoles('user', 'admin'),cmtCtrl.deleteComment);
+
+
+
+
 module.exports = router;
 //Verifier route et controller commentaire ensuite crud admin ensuite test unitaire

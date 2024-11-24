@@ -1,6 +1,6 @@
 const config = require('../configbdd/db');
-const User = require('../models/users.model');
-const Role = require('../models/roles.model');
+// const User = require('../models/users.model');
+const { User, Roles: Role } = require('../models/index'); // ou le chemin vers votre fichier d'associations
 
 const Op = config.Sequelize.Op;
 const bcrypt = require('bcryptjs');
@@ -88,15 +88,14 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const user = await User.findOne({
-            where: { email: req.body.email },
+            where: { email: req.body.email },  // Par exemple, si tu utilises l'email pour rechercher l'utilisateur
             include: [{
                 model: Role,
-                as: 'roles',
-                attributes: ['role_name'],
-                through: { attributes: [] }
+                as: 'roles'  // Assure-toi que cet alias est utilisé pour l'association
             }]
         });
-
+        
+console.log(user)
         if (!user) {
             return res.status(401).json({ message: 'Utilisateur non trouvé !' });
         }
@@ -107,7 +106,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Mot de passe incorrect' });
         }
 
-        // Extraction des rôles - utilisation de 'roles' au lieu de 'Roles'
+        // Extraction des rôles
         const userRoles = user.roles.map(role => role.role_name);
 
         // Création du token avec l'userId et les rôles

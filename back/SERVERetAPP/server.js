@@ -1,4 +1,4 @@
-
+'use strict';
 require('dotenv').config();
 // Configure et démarre le serveur avec Node.js et Express.
 // Utilise le module HTTP pour créer un serveur basé sur l'application Express.
@@ -9,7 +9,6 @@ const http = require('http');
 const app = require('./app');
 const dbConfig = require('../configbdd/db'); 
 
-const sequelize = require('../configbdd/db');
 
 // Je normalise le port
 const normalizePort = (val) => {
@@ -74,7 +73,7 @@ dbConfig.sync({ force: false })
   });
 
 // Test la connexion grâce a la fonction authenticate
-sequelize.authenticate()
+dbConfig.authenticate()
   .then(() => {
     console.log('Connexion à la base de données réussie.');
   })
