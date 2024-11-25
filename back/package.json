@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon SERVERetAPP/server.js",
-    "test": "jest"
+    "test": "jest",
+     "test:coverage": "jest --coverage"
   },
   "author": "WalidDev",
   "license": "ISC",
@@ -25,5 +26,6 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "supertest": "^7.0.0"
+   
   }
 }

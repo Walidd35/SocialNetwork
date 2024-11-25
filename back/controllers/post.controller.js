@@ -33,17 +33,8 @@ const User = require('../models/users.model');
       console.error('Erreur lors de la création du post :', error);
       res.status(500).json({ error: 'Erreur lors de la création du post.', details: error.message });
   }
-  };   
+};   
 
-
-//   try {
-//       const posts = await Post.findAll();
-//       res.status(200).json(posts);
-//   } catch (error) {
-//       console.error('Erreur lors de la récupération des posts:', error);
-//       res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des posts.' });
-//   }
-//   };
 exports.getAllPosts = async (req, res) => { 
     try {
         // Récupère tous les posts et convertit les instances Sequelize en objets simples
@@ -65,36 +56,26 @@ exports.getAllPosts = async (req, res) => {
     }
 };
 
-  exports.getPostById = async (req, res, next) => {
+exports.getPostById = async (req, res) => {
     try {
-        // Si on appelle directement la fonction (comme middleware)
-        const postId = req.params ? req.params.id : req;
-        
-        const post = await Post.findByPk(postId);
-        
-        if (!post) {
-            if (next) {
-                // return next(new Error('Post non trouvé'));
-                return res.status(404).json({message:"Post non disponible"})
-            }
-            return null;
-        }
-        
-        // Si appelé comme middleware, renvoyer la réponse
-        if (res) {
-            return res.status(200).json(post);
-        }
-        // Si appelé comme fonction, renvoyer juste le post
-        return post;
-        
+      const postId = req.params.id;
+      const post = await Post.findByPk(postId);
+  
+      if (!post) {
+        return res.status(404).json({
+          message: 'Post non disponible'
+        });
+      }
+  
+      return res.status(200).json(post);
     } catch (error) {
-        console.error('Erreur lors de la récupération de la publication :', error);
-        if (next) {
-            return next(error);
-        }
-        throw error;
+      console.error(`Erreur lors de la récupération du post (ID: ${req.params.id}):`, error);
+      return res.status(500).json({
+        error: 'Erreur lors de la récupération du post',
+       
+      });
     }
-  };
+};
 
 exports.updatePost = async (req, res) => {
 
@@ -145,4 +126,4 @@ exports.updatePost = async (req, res) => {
         console.error('Erreur lors de la suppression de la publication :', error);
         return res.status(500).json({ error: 'Erreur lors de la suppression de la publication.' });
     }
-  };
+};

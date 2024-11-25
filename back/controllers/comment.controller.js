@@ -126,7 +126,7 @@ exports.getCommentById = async (req,res) => {
     res.status(500).json({error: 'Erreur lors de la récupération du commentaire'});
   }
 }
-// Contrôleur pour la modification d'un commentaire
+
 exports.modifyComment = async (req, res) => {
   try {
     const { content } = req.body;
