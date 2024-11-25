@@ -8,7 +8,7 @@ const cmtCtrl = require('../controllers/comment.controller')
 const upload = require('../middlewares/multerUpload');
 const Post = require('../models/posts.model')
 const Comments = require('../models/comments.model')
-
+const User = require('../models/users.model')
 
 // Routes Utilisateurs
 router.post('/signup', userCtrl.signup);
@@ -16,7 +16,7 @@ router.post('/login', userCtrl.login);
 router.get('/users', 
     auth,
     authorizeRoles('admin'),
-    userCtrl.getAll
+    userCtrl.getAllUsers
 );
 router.get('/user/:id',
     auth,
@@ -29,8 +29,16 @@ router.get('/user/:id',
             res.status(403).json({ message: 'Accès non autorisé' });
         }
     },
-    userCtrl.getById
+    userCtrl.getUserById
 );
+router.put('/putuser/:id', 
+    auth,
+    authorizeRoles('user', 'admin'),
+    verifyOwnership(async (req) => {
+      return await User.findByPk(req.params.id);
+    }),
+    userCtrl.updateUser  // Ajout du contrôleur ici
+  );
 router.delete('/user/:id',
     auth,
     authorizeRoles('user', 'admin'),
@@ -42,7 +50,7 @@ router.delete('/user/:id',
             res.status(403).json({ message: 'Accès non autorisé' });
         }
     },
-    userCtrl.deleteUserById
+    userCtrl.deleteUser
 );
 
 
@@ -68,7 +76,7 @@ router.get('/getpost/:id',
 router.put(
     '/putpost/:id',
     auth,
-    authorizeRoles('user', 'admin'),
+    authorizeRoles('user','admin'),
     verifyOwnership(async (req) => {
       return await Post.findByPk(req.params.id); // Assure de vérifier le post par ID
     }),
