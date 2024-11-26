@@ -1,0 +1,38 @@
+version: '3.9'  # Mettre à jour la version
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: magenta
+      MYSQL_DATABASE: bddnetwork
+      MYSQL_USER: walid
+      MYSQL_PASSWORD: magenta
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nodeapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=walid
+      - DB_PASSWORD=magenta
+      - DB_NAME=bddnetwork
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules

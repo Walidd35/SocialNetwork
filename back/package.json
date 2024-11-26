@@ -2,10 +2,15 @@
   "name": "back",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": {
-    "start": "nodemon SERVERetAPP/server.js",
+ 
+"scripts": {
+    "start": "node SERVERetAPP/server.js",
+    "dev": "nodemon SERVERetAPP/server.js",
     "test": "jest",
-     "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "author": "WalidDev",
   "license": "ISC",

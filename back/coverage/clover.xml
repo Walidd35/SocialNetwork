@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1732566610101" clover="3.2.0">
-  <project timestamp="1732566610101" name="All files">
-    <metrics statements="230" coveredstatements="187" conditionals="84" coveredconditionals="65" methods="19" coveredmethods="17" elements="333" coveredelements="269" complexity="0" loc="230" ncloc="230" packages="3" files="7" classes="7"/>
+<coverage generated="1732634662417" clover="3.2.0">
+  <project timestamp="1732634662417" name="All files">
+    <metrics statements="230" coveredstatements="187" conditionals="82" coveredconditionals="63" methods="19" coveredmethods="17" elements="331" coveredelements="267" complexity="0" loc="230" ncloc="230" packages="3" files="7" classes="7"/>
     <package name="configbdd">
-      <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
+      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="db.js" path="/Users/walid/Documents/SQLApi/back/configbdd/db.js">
-        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="0" coveredmethods="0"/>
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="6" type="stmt"/>
         <line num="2" count="6" type="stmt"/>
         <line num="4" count="6" type="stmt"/>
-        <line num="7" count="6" type="stmt"/>
-        <line num="13" count="6" type="stmt"/>
+        <line num="12" count="6" type="stmt"/>
       </file>
     </package>
     <package name="controllers">
