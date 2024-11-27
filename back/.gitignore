@@ -6,3 +6,4 @@ mysql-data/
 /mysql-docker/
 .git/
 .dockerignore
+.DS_Store
