@@ -51,7 +51,7 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 git clone https://github.com/Walidd35/SocialNetwork.git
 cd SocialNetwork
 
-Configuration de l'Environnement
+Configuration de l'/Environnement
 
 Créez un fichier .env à la racine du projet avec les informations de connexion à la base de données :
 
