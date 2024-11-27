@@ -50,37 +50,38 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 ```bash
 git clone https://github.com/Walidd35/SocialNetwork.git
 cd SocialNetwork
-
+```
 Configuration de l'/Environnement
 
 Créez un fichier .env à la racine du projet avec les informations de connexion à la base de données :
-
+```bash
 DB_NAME=social_network
 DB_USER=root
 DB_PASSWORD=yourpassword
 DB_HOST=localhost
 DB_DIALECT=mysql
-
+```
 Optionnel : Utiliser Docker
 
 Si vous souhaitez exécuter l'application avec Docker, assurez-vous que Docker est installé.
 Le fichier docker-compose.yml est déjà configuré pour créer un environnement contenant le backend et MySQL.
 
 Lancez l'application avec Docker :
-
+```bash
 docker-compose up --build
-
+```
 Installer les Dépendances Node.js
-
+```bash
 npm install
-
+```
 Lancer l'Application
 
 Une fois toutes les dépendances installées, démarrez l'application :
-
+```bash
 npm start
-
+```
 L'API sera accessible sur http://localhost:3000.
+
 Structure du Projet
 
 ├── back/
@@ -107,17 +108,17 @@ Routes Principales
 Contribuer
 
 Si vous souhaitez contribuer à ce projet, suivez ces étapes :
-
+      
     Forkez ce repository.
 
     Créez une branche pour votre fonctionnalité :
-
+```bash
 git checkout -b feature/nom-de-la-fonctionnalité
-
+```
 Faites vos changements et committez :
-
+```bash
 git commit -am 'Ajoute une nouvelle fonctionnalité'
-
+```
 Poussez votre branche :
 
     git push origin feature/nom-de-la-fonctionnalité
