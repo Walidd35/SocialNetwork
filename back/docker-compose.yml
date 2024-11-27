@@ -1,4 +1,4 @@
-version: '3.9'  # Mettre à jour la version
+version: '3.6'  # Mettre à jour la version
 services:
   mysql:
     image: mysql:latest
@@ -36,3 +36,4 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+     

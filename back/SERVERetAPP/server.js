@@ -51,26 +51,43 @@ const errorHandler = (error) => {
     }
 };
 
-// Synchronisation des modèles avec la base de données
-dbConfig.sync({ force: false }) 
-  .then(() => {
+// // Synchronisation des modèles avec la base de données
+// dbConfig.sync({ force: false }) 
+//   .then(() => {
+//     console.log('Tables synchronisées avec succès');
+
+//     server.on('error', errorHandler);
+
+//     // Événement d'écoute
+//     server.on('listening', () => {
+//         const address = server.address();
+//         const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+//         console.log('Le serveur écoute au ' + bind); // J'affiche l'adresse d'écoute
+//     });
+
+//     // Je démarre le serveur
+//     server.listen(port);
+//   })
+//   .catch((error) => {
+//     console.error('Erreur lors de la synchronisation :', error);
+//   });
+const syncDatabase = async () => {
+  try {
+    await dbConfig.sync({ force: false });
     console.log('Tables synchronisées avec succès');
-
     server.on('error', errorHandler);
-
-    // Événement d'écoute
     server.on('listening', () => {
-        const address = server.address();
-        const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-        console.log('Le serveur écoute au ' + bind); // J'affiche l'adresse d'écoute
+      const address = server.address();
+      const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+      console.log('Le serveur écoute au ' + bind);
     });
-
-    // Je démarre le serveur
     server.listen(port);
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Erreur lors de la synchronisation :', error);
-  });
+  }
+ };
+ 
+ syncDatabase();
 
 // Test la connexion grâce a la fonction authenticate
 dbConfig.authenticate()

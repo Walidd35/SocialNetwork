@@ -4,13 +4,14 @@ const { DataTypes } = require('sequelize') // J'importe les datatypes depuis Seq
 const sequelize = require('../configbdd/db') // J'importe l'instance Sequelize . 
 
 // La fonction define appartient au package Sequelize. Elle permet de définir un modèle représentant une table SQL .
-const User = sequelize.define('User',{
+const User = sequelize.define('Users',{
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
+    
     username:{
         type: DataTypes.STRING(20),
         allowNull: false,
@@ -26,7 +27,8 @@ const User = sequelize.define('User',{
         allowNull: false,
     }
 }, {
-    tableName: 'User',
+    tableName: 'Users',
+    modelName: 'Users',
     timestamps: false
 });
 

@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize') // J'importe DataTypes depuis Sequelize .
-const sequelize = require('../configbdd/db') // J'importe une instance de ma config bdd .
+const sequelize  = require('../configbdd/db');// J'importe une instance de ma config bdd .
  
 
 // La fonction define permet de définir un modèle représentant une table SQL .

@@ -85,6 +85,7 @@ User.belongsToMany(Roles, {
   as: "roles"
 });
 
+
 User.hasMany(Posts, { foreignKey: 'user_id' });
 User.hasMany(Comments, { foreignKey: 'user_id' });
 

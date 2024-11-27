@@ -19,12 +19,6 @@ module.exports = (req, res, next) => {
             });
         }
         
-        // if (!decodedToken.userId || !decodedToken.roles) {
-        //     return res.status(400).json({
-        //         message: "Identifiant de l'utilisateur ou rôles manquants dans le token."
-        //     });
-        // }
-        
         if (!Array.isArray(decodedToken.roles)) {
             return res.status(400).json({
                 message: "Les rôles dans le token ne sont pas valides."
