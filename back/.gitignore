@@ -1,7 +1,8 @@
-node_modules
+node_modules/
 .env
-/coverage
+coverage/
 docker-compose.yml
-/mysql-data
-/mysql-docker
+mysql-data/
+/mysql-docker/
+.git/
 .dockerignore

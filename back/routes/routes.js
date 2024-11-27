@@ -37,7 +37,7 @@ router.put('/putuser/:id',
     verifyOwnership(async (req) => {
       return await User.findByPk(req.params.id);
     }),
-    userCtrl.updateUser  // Ajout du contrôleur ici
+    userCtrl.updateUser  
   );
 router.delete('/user/:id',
     auth,
@@ -60,7 +60,7 @@ router.post('/post',
     authorizeRoles('user', 'admin'),
     upload.single('image'),
     (req, res, next) => {
-        // Assure que l'userId du post correspond à l'utilisateur authentifié
+        
         req.body.userId = req.auth.userId;
         next();
     },
@@ -78,7 +78,7 @@ router.put(
     auth,
     authorizeRoles('user','admin'),
     verifyOwnership(async (req) => {
-      return await Post.findByPk(req.params.id); // Assure de vérifier le post par ID
+      return await Post.findByPk(req.params.id); 
     }),
     postCtrl.updatePost
 ); 

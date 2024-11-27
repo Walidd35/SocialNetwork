@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../configbdd/db'); // Ajustez le chemin selon votre structure
+const sequelize = require('../configbdd/db'); 
 
 const Comments = sequelize.define('Comments', {
   comment_id: {

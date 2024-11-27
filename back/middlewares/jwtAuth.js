@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-// Utilisation de la clé JWT de l'environnement ou valeur par défaut
+// Utilisation de la clé JWT de l'environnement 
 const safetyKeyJwt = process.env.JWT_SECRET || 'safetyKeyJwt';
 
 module.exports = (req, res, next) => {

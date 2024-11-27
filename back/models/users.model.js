@@ -1,9 +1,7 @@
-//la constante DataTypes est utilisée pour définir les types de données dans les modèles de la base de données .
 
 const { DataTypes } = require('sequelize') // J'importe les datatypes depuis Sequelize .
-const sequelize = require('../configbdd/db') // J'importe l'instance Sequelize . 
+const sequelize = require('../configbdd/db') // J'importe l'instance Sequelize 
 
-// La fonction define appartient au package Sequelize. Elle permet de définir un modèle représentant une table SQL .
 const User = sequelize.define('Users',{
     user_id: {
         type: DataTypes.INTEGER,

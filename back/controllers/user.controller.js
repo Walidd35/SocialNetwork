@@ -1,7 +1,5 @@
 const config = require('../configbdd/db');
-// const User = require('../models/users.model');
-const { User, Roles: Role } = require('../models/index'); // ou le chemin vers votre fichier d'associations
-
+const { User, Roles: Role } = require('../models/index'); 
 const { sequelize } = require('../models/index');
 const Op = sequelize.Sequelize.Op;
 const bcrypt = require('bcryptjs');

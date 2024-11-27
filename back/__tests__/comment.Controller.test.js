@@ -29,7 +29,7 @@ describe('Test unitaires Comment', () => {
   });
 
   describe('createComment', () => {
-    it('should create a comment successfully', async () => {
+    it('Doit pouvoir créer un commentaire', async () => {
       // Setup
       req.body = { content: 'Test Comment' };
       req.params.postId = '1';
@@ -63,7 +63,7 @@ describe('Test unitaires Comment', () => {
       });
     });
 
-    it('should return 404 if post not found', async () => {
+    it('Doit retourner 404 si erreurs', async () => {
       // Setup
       req.body = { content: 'Test Comment' };
       req.params.postId = '999';
@@ -79,7 +79,7 @@ describe('Test unitaires Comment', () => {
   });
 
   describe('getCommentById', () => {
-    it('should return a comment by id', async () => {
+    it('Doit pouvoir retourner un commentaire par son ID', async () => {
       // Setup
       req.params.commentId = '1';
       const mockComment = {
@@ -134,7 +134,7 @@ describe('Test unitaires Comment', () => {
   });
 
   describe('modifyComment', () => {
-    it('should modify comment successfully', async () => {
+    it('Doit pouvoir modifier un commentaire', async () => {
       // Setup
       req.params.commentId = '1';
       req.body = { content: 'Updated Comment' };
@@ -165,7 +165,7 @@ describe('Test unitaires Comment', () => {
       }));
     });
 
-    it('should return 403 if user is not authorized', async () => {
+    it('Doit retourner 403 si User non-autorisé', async () => {
       // Setup
       req.params.commentId = '1';
       req.body = { content: 'Updated Comment' };
@@ -192,7 +192,7 @@ describe('Test unitaires Comment', () => {
   });
 
   describe('deleteComment', () => {
-    it('should delete comment successfully', async () => {
+    it('Doit pouvoir supprimer un commentaire', async () => {
       // Setup
       req.params.commentId = '1';
       req.auth.userId = '1';
@@ -218,7 +218,7 @@ describe('Test unitaires Comment', () => {
       });
     });
 
-    it('should return 403 if user is not authorized', async () => {
+    it('Doit retourner 403 si User non-autorisé', async () => {
       // Setup
       req.params.commentId = '1';
       req.auth.userId = '2';

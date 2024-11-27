@@ -30,7 +30,7 @@ describe('Tests Unitaires Post', () => {
   });
 
   describe('createPost', () => {
-    it('should create a post successfully', async () => {
+    it('Doit pouvoir créer un post', async () => {
       // Setup
       req.body = {
         title: 'Test Post',
@@ -62,7 +62,7 @@ describe('Tests Unitaires Post', () => {
       expect(res.json).toHaveBeenCalledWith(mockPost);
     });
 
-    it('should return 400 if title or description is missing', async () => {
+    it('Doit retourner 400 si titre ou description manquante', async () => {
       // Setup
       req.body = { title: 'Test Post' }; // Missing description
 
@@ -77,7 +77,7 @@ describe('Tests Unitaires Post', () => {
       expect(Post.create).not.toHaveBeenCalled();
     });
 
-    it('should return 400 if auth token is missing', async () => {
+    it('Doit retourner 400 si token manquant', async () => {
       // Setup
       req.auth = null;
       req.body = {
@@ -95,7 +95,7 @@ describe('Tests Unitaires Post', () => {
       });
     });
 
-    it('should handle server errors', async () => {
+    it('Doit pouvoir gérer les erreurs', async () => {
       // Setup
       req.body = {
         title: 'Test Post',
@@ -117,7 +117,7 @@ describe('Tests Unitaires Post', () => {
   });
 
   describe('getAllPosts', () => {
-    it('should return all posts with user information', async () => {
+    it('Doit retourner tout les posts avec les infos des Users', async () => {
       // Setup
       const mockPosts = [
         {
@@ -152,7 +152,7 @@ describe('Tests Unitaires Post', () => {
       }]);
     });
 
-    it('should handle server errors', async () => {
+    it('Doit pouvoir gérer les erreurs', async () => {
       // Setup
       Post.findAll.mockRejectedValue(new Error('Database error'));
 
@@ -181,7 +181,7 @@ describe('Tests Unitaires Post', () => {
         next = jest.fn();
     });
 
-    it('should return a post by id', async () => {
+    it('Doit retourner un post grâce a son ID', async () => {
         // Setup
         req.params.id = '1';
         const mockPost = { id: 1, title: 'Test Post' };
@@ -196,7 +196,7 @@ describe('Tests Unitaires Post', () => {
         expect(res.json).toHaveBeenCalledWith(mockPost);
     });
 
-    it('should return 404 if post not found', async () => {
+    it('Doit retourner 404 si le post n/existe pas', async () => {
         // Setup
         req.params.id = '999';
         Post.findByPk.mockResolvedValue(null);
@@ -211,7 +211,7 @@ describe('Tests Unitaires Post', () => {
         });
     });
 
-    it('should return 500 if there is a database error', async () => {
+    it('Doit retourner 500 si il une erreur base de données', async () => {
         // Setup
         req.params.id = '1';
         Post.findByPk.mockRejectedValue(new Error('Database error'));
@@ -228,7 +228,7 @@ describe('Tests Unitaires Post', () => {
   });
 
   describe('updatePost', () => {
-    it('should update post successfully', async () => {
+    it('Doit pouvoir modifier un post', async () => {
       // Setup
       req.params.id = '1';
       req.body = {
@@ -259,7 +259,7 @@ describe('Tests Unitaires Post', () => {
       });
     });
 
-    it('should return 404 if post not found', async () => {
+    it('Doit retourner 404 si post inexistant', async () => {
       // Setup
       req.params.id = '999';
       Post.findByPk.mockResolvedValue(null);
@@ -274,7 +274,7 @@ describe('Tests Unitaires Post', () => {
       });
     });
 
-    it('should return 403 if user is not authorized', async () => {
+    it('Doit retourner 403 si User non-autorisé', async () => {
       // Setup
       req.params.id = '1';
       req.auth.userId = '2'; // Different user
@@ -299,7 +299,7 @@ describe('Tests Unitaires Post', () => {
   });
 
   describe('deletePost', () => {
-    it('should delete post successfully', async () => {
+    it('Doit pouvoir supprimer un post', async () => {
       // Setup
       req.params.id = '1';
       const mockPost = {
@@ -319,7 +319,7 @@ describe('Tests Unitaires Post', () => {
       });
     });
 
-    it('should return 404 if post not found', async () => {
+    it('Doit retourner 404 si post inexistant', async () => {
       // Setup
       req.params.id = '999';
       Post.findByPk.mockResolvedValue(null);
@@ -334,7 +334,7 @@ describe('Tests Unitaires Post', () => {
       });
     });
 
-    it('should handle server errors', async () => {
+    it('Doit gérer les erreurs serveur', async () => {
       // Setup
       req.params.id = '1';
       Post.findByPk.mockRejectedValue(new Error('Database error'));

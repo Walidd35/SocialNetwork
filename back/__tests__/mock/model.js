@@ -18,3 +18,4 @@ module.exports = {
 test('test pour tester', () => {
     expect(true).toBe(true);
   });
+//git commit -m "Suppression des fichiers inutiles"

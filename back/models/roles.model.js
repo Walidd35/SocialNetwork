@@ -6,7 +6,7 @@ const { Model, DataTypes } = require('sequelize');
 class Roles extends Model {}
 
 Roles.init({
-    // définition des attributs du modèle
+   
     role_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
