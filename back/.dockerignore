@@ -6,3 +6,6 @@ Dockerfile
 .gitignore
 coverage
 tests
+.docker-compose.yml
+mysql-data
+.env

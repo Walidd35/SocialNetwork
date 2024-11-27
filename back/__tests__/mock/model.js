@@ -15,3 +15,6 @@ module.exports = {
         belongsToMany: jest.fn()
     }
 };
+test('test pour tester', () => {
+    expect(true).toBe(true);
+  });

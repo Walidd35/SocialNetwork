@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1732657127455" clover="3.2.0">
-  <project timestamp="1732657127455" name="All files">
+<coverage generated="1732734020628" clover="3.2.0">
+  <project timestamp="1732734020628" name="All files">
     <metrics statements="230" coveredstatements="187" conditionals="82" coveredconditionals="63" methods="19" coveredmethods="17" elements="331" coveredelements="267" complexity="0" loc="230" ncloc="230" packages="3" files="7" classes="7"/>
     <package name="configbdd">
       <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
@@ -259,7 +259,7 @@
         <line num="3" count="2" type="stmt"/>
         <line num="4" count="2" type="stmt"/>
         <line num="7" count="2" type="stmt"/>
-        <line num="33" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
       </file>
     </package>
   </project>

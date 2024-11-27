@@ -1,7 +1,6 @@
 const { describe, it, expect, beforeEach } = require('@jest/globals');
 const Comment = require('../models/comments.model');
 const Post = require('../models/posts.model');
-// const User = require('../models/users.model');
 const commentController = require('../controllers/comment.controller');
 
 // Mock des modèles
