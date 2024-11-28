@@ -11,9 +11,9 @@ const Comments = require('../models/comments.model')
 const User = require('../models/users.model')
 
 // Routes Utilisateurs
-router.post('/signup', userCtrl.signup);
-router.post('/login', userCtrl.login);
-router.get('/users', 
+router.post('/auth/signup', userCtrl.signup);
+router.post('/auth/login', userCtrl.login);
+router.get('all/users', 
     auth,
     authorizeRoles('admin'),
     userCtrl.getAllUsers
@@ -31,7 +31,7 @@ router.get('/user/:id',
     },
     userCtrl.getUserById
 );
-router.put('/putuser/:id', 
+router.put('/user/:id', 
     auth,
     authorizeRoles('user', 'admin'),
     verifyOwnership(async (req) => {
@@ -66,15 +66,15 @@ router.post('/post',
     },
     postCtrl.createPost
 );
-router.get('/allposts',
+router.get('/all/posts',
     postCtrl.getAllPosts
 );
-router.get('/getpost/:id',
+router.get('get/post/:id',
     auth,
     postCtrl.getPostById
 );
 router.put(
-    '/putpost/:id',
+    '/put/post/:id',
     auth,
     authorizeRoles('user','admin'),
     verifyOwnership(async (req) => {
@@ -82,7 +82,7 @@ router.put(
     }),
     postCtrl.updatePost
 ); 
-router.delete('/deletepost/:id', auth, authorizeRoles('user', 'admin'), async (req, res, next) => {
+router.delete('/delete/post/:id', auth, authorizeRoles('user', 'admin'), async (req, res, next) => {
     try {
       const postId = req.params.id;
   
@@ -111,18 +111,18 @@ router.delete('/deletepost/:id', auth, authorizeRoles('user', 'admin'), async (r
   
 
 // Route pour créer un commentaire sur un post
-router.post('/posts/:postId/comments', auth, cmtCtrl.createComment);
-router.get('/allcomments',auth,cmtCtrl.getAllComments);
-router.get('/getcomments/:commentId',auth,cmtCtrl.getCommentById);
+router.post('/create/:postId/comment', auth, cmtCtrl.createComment);
+router.get('/all/comments',auth,cmtCtrl.getAllComments);
+router.get('/get/comment/:commentId',auth,cmtCtrl.getCommentById);
 router.put(
-    '/comments/:commentId',
+    '/comment/:commentId',
     auth,
     verifyOwnership(async (req) => {
       return await Comments.findByPk(req.params.commentId); // Recherche le commentaire
     }),
     cmtCtrl.modifyComment
 );
-router.delete('/comments/:commentId',auth ,authorizeRoles('user', 'admin'),cmtCtrl.deleteComment);
+router.delete('/comment/:commentId',auth ,authorizeRoles('user', 'admin'),cmtCtrl.deleteComment);
 
 
 

@@ -2,7 +2,7 @@
 const { DataTypes } = require('sequelize') // J'importe les datatypes depuis Sequelize .
 const sequelize = require('../configbdd/db') // J'importe l'instance Sequelize 
 
-const User = sequelize.define('Users',{
+const User = sequelize.define('User',{
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -25,8 +25,8 @@ const User = sequelize.define('Users',{
         allowNull: false,
     }
 }, {
-    tableName: 'Users',
-    modelName: 'Users',
+    tableName: 'User',
+    modelName: 'User',
     timestamps: false
 });
 
