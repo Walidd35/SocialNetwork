@@ -13,7 +13,7 @@ const User = require('../models/users.model')
 // Routes Utilisateurs
 router.post('/auth/signup', userCtrl.signup);
 router.post('/auth/login', userCtrl.login);
-router.get('all/users', 
+router.get('/all/users', 
     auth,
     authorizeRoles('admin'),
     userCtrl.getAllUsers
@@ -69,7 +69,7 @@ router.post('/post',
 router.get('/all/posts',
     postCtrl.getAllPosts
 );
-router.get('get/post/:id',
+router.get('/get/post/:id',
     auth,
     postCtrl.getPostById
 );
@@ -110,10 +110,11 @@ router.delete('/delete/post/:id', auth, authorizeRoles('user', 'admin'), async (
 });
   
 
-// Route pour créer un commentaire sur un post
+// Route pour commentaire sur un post
 router.post('/create/:postId/comment', auth, cmtCtrl.createComment);
 router.get('/all/comments',auth,cmtCtrl.getAllComments);
-router.get('/get/comment/:commentId',auth,cmtCtrl.getCommentById);
+router.get('/posts/:postId/comments',auth,cmtCtrl.getCommentsByPostId);
+
 router.put(
     '/comment/:commentId',
     auth,

@@ -88,44 +88,111 @@ exports.getAllComments = async (req, res) => {
   }
 };
 
-exports.getCommentById = async (req,res) => {
+// "exports.getCommentsByPostId = async (req, res) => {"
+//   console.log('Début de getCommentsByPostId');
+//   try {
+//     const { postId } = req.params;
+//     const userId = req.auth?.userId;
+//     const userRoles = req.auth?.roles || [];
 
-  const {commentId} = req.params;
+//     console.log(`Récupération des commentaires pour le postId ${postId}`);
 
-  try{
+//     // Vérifier si le post existe
+//     const post = await Post.findByPk(postId);
+//     if (!post) {
+//       console.log(`Post avec l'ID ${postId} non trouvé`);
+//       return res.status(404).json({ error: 'Post non trouvé' });
+//     }
 
-      const comment = await Comment.findByPk(commentId,{
-        include:[
-          {
-            model:User,
-            attributes: ['username','email'],
-          },
-          {
-            model:Post,
-            attributes:['post_id', 'title', 'description', 'image'],
-            include: [
-              {
-                model:User,
-                attributes:['email'],
-              },
-            ],
-          },
-        ],
-      });
+//     // Récupérer les commentaires associés au post
+//     const comments = await Comment.findAll({
+//       where: { post_id: postId },
+//       include: [{
+//         model: User,
+//         attributes: ['user_id', 'username']
+//       }],
+//       order: [['created_at', 'DESC']]
+//     });
 
-      //  Vérifier si le commentaire existe
-      if(!comment){
-        return res.status(404).json({message: 'Commentaire non trouvé'})
-      }
+//     // Ajouter des informations sur les droits de l'utilisateur pour chaque commentaire
+//     const commentsWithPermissions = comments.map(comment => {
+//       const isAdmin = userRoles.includes('admin');
+//       const isCommentAuthor = comment.user_id === userId;
+//       return {
+//         ...comment.toJSON(),
+//         canDelete: isAdmin || isCommentAuthor
+//       };
+//     });
 
-      // Retourner le commentaire trouvé
-      res.status(200).json(comment);
+//     console.log(`${comments.length} commentaires trouvés pour le post ${postId}`);
+//     res.status(200).json(commentsWithPermissions);
+//   } catch (error) {
+//     console.error('Erreur dans getCommentsByPostId:', error);
+//     res.status(500).json({ error: 'Erreur lors de la récupération des commentaires', details: error.message });
+//   }
+// };
 
-  }catch(error){
-    console.error("Erreur lors de la récuperation du commentaire:", error);
-    res.status(500).json({error: 'Erreur lors de la récupération du commentaire'});
+// exports.getCommentById = async (req,res) => {
+
+//   const {commentId} = req.params;
+
+//   try{
+
+//       const comment = await Comment.findByPk(commentId,{
+//         include:[
+//           {
+//             model:User,
+//             attributes: ['username','email'],
+//           },
+//           {
+//             model:Post,
+//             attributes:['post_id', 'title', 'description', 'image'],
+//             include: [
+//               {
+//                 model:User,
+//                 attributes:['email'],
+//               },
+//             ],
+//           },
+//         ],
+//       });
+
+//       //  Vérifier si le commentaire existe
+//       if(!comment){
+//         return res.status(404).json({message: 'Commentaire non trouvé'})
+//       }
+
+//       // Retourner le commentaire trouvé
+//       res.status(200).json(comment);
+
+//   }catch(error){
+//     console.error("Erreur lors de la récuperation du commentaire:", error);
+//     res.status(500).json({error: 'Erreur lors de la récupération du commentaire'});
+//   }
+// }
+
+exports.getCommentsByPostId = async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    console.log(`Récupération des commentaires pour le post ID: ${postId}`);
+
+    const comments = await Comment.findAll({
+      where: { post_id: postId },
+      include: [{ model: User, attributes: ['username'] }],
+      order: [['created_at', 'DESC']]
+    });
+
+    if (!comments.length) {
+      return res.status(404).json({ message: 'Aucun commentaire trouvé pour ce post.' });
+    }
+
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error('Erreur dans getCommentsByPostId:', error);
+    res.status(500).json({ error: 'Erreur serveur lors de la récupération des commentaires.' });
   }
-}
+};
+
 
 exports.modifyComment = async (req, res) => {
   try {
