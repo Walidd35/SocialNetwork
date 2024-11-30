@@ -1,10 +1,12 @@
 const  Post = require("../models/posts.model");
 const User = require('../models/users.model');
+const path = require('path'); 
 
  exports.createPost = async (req, res) => {
   try {
       const { title, description } = req.body;
       const imageUrl = req.file ? req.file.path : null;
+      console.log(req.body);  // Affiche le contenu de la requête
 
       // Vérification que req.auth et req.auth.userId sont définis
       if (!req.auth || !req.auth.userId) {
@@ -37,19 +39,29 @@ const User = require('../models/users.model');
 
 exports.getAllPosts = async (req, res) => { 
     try {
-        // Récupère tous les posts et convertit les instances Sequelize en objets simples
         const posts = await Post.findAll({
             include: [
                 {
-                    model: User,   // Inclure la table User
-                    attributes: ['username']  // Sélectionner seulement le username
+                    model: User,   
+                    attributes: ['username']  
                 }
+            ],
+            order: [
+                ['createdAt', 'DESC']  
             ]
         });
-        const plainPosts = posts.map(post => post.toJSON());  // Conversion des objets Sequelize en objets JavaScript simples
 
-        // Envoie les posts dans la réponse
-        res.status(200).json(plainPosts);
+        const postsWithUsernames = posts.map(post => {
+            const plainPost = post.toJSON();
+            return {
+                ...plainPost,
+                username: plainPost.User ? plainPost.User.username : 'Anonyme',
+                // Extrait uniquement le nom de fichier
+                image: plainPost.image ? plainPost.image.split('/').pop() : null
+            };
+        });
+
+        res.status(200).json(postsWithUsernames);
     } catch (error) {
         console.error('Erreur lors de la récupération des posts:', error);
         res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des posts.' });

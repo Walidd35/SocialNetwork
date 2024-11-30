@@ -69,7 +69,7 @@ router.post('/post',
 router.get('/all/posts',
     postCtrl.getAllPosts
 );
-router.get('/get/post/:id',
+router.get('/post/:id',
     auth,
     postCtrl.getPostById
 );
