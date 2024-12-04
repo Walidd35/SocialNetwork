@@ -82,18 +82,7 @@ npm start
 ```
 L'API sera accessible sur http://localhost:3000.
 
-Structure du Projet
 
-├── back/
-│   ├── config/              # Configuration de la base de données et Sequelize
-│   ├── controllers/         # Logique des routes et gestion des requêtes
-│   ├── models/              # Définition des modèles Sequelize (User, Post, Comment, Role)
-│   ├── routes/              # Définition des routes API
-│   ├── middlewares/         # Middlewares pour l'authentification et l'autorisation
-│   ├── docker-compose.yml   # Fichier Docker Compose pour orchestrer les containers
-│   └── server.js            # Point d'entrée de l'application
-├── .env                     # Fichier de configuration pour les variables d'environnement
-└── .gitignore               # Fichiers à ignorer dans le contrôle de version
 
 Routes Principales
 
