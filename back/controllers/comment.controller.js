@@ -1,32 +1,36 @@
-const Comment = require('../models/comments.model');  // Assurez-vous que le modèle est bien importé
-const Post  = require('../models/posts.model');  // Assurez-vous d'importer le modèle Post pour vérifier si le post existe
-const User = require('../models/users.model')
+const Comment = require("../models/comments.model"); // Assurez-vous que le modèle est bien importé
+const Post = require("../models/posts.model"); // Assurez-vous d'importer le modèle Post pour vérifier si le post existe
+const User = require("../models/users.model");
 
 exports.createComment = async (req, res) => {
   try {
-    const { content } = req.body;  // Contenu du commentaire
-    const postId = req.params.postId;  // ID du post auquel on veut ajouter un commentaire
-    const userId = req.auth.userId;  // ID de l'utilisateur récupéré depuis le middleware d'authentification (via JWT)
+    const { content } = req.body; // Contenu du commentaire
+    const postId = req.params.postId; // ID du post auquel on veut ajouter un commentaire
+    const userId = req.auth.userId; // ID de l'utilisateur récupéré depuis le middleware d'authentification (via JWT)
 
     // Vérifier si le post existe
     const post = await Post.findByPk(postId);
     if (!post) {
-      return res.status(404).json({ error: 'Post non trouvé' });
+      return res.status(404).json({ error: "Post non trouvé" });
     }
 
     // Créer le commentaire
     const newComment = await Comment.create({
-      content,  // Le contenu du commentaire
-      post_id: postId,  // ID du post auquel ce commentaire appartient
-      user_id: userId,  // ID de l'utilisateur qui a créé le commentaire
+      content, // Le contenu du commentaire
+      post_id: postId, // ID du post auquel ce commentaire appartient
+      user_id: userId, // ID de l'utilisateur qui a créé le commentaire
     });
 
     // Répondre avec le commentaire créé
-    res.status(201).json({ message: 'Commentaire envoyée avec succès', commentaire : newComment });
-
+    res
+      .status(201)
+      .json({
+        message: "Commentaire envoyée avec succès",
+        commentaire: newComment,
+      });
   } catch (error) {
-    console.error('Erreur lors de l/envoi du commentaire:', error);
-    res.status(500).json({ error: 'Erreur lors de de l/envoi du commentaire' });
+    console.error("Erreur lors de l/envoi du commentaire:", error);
+    res.status(500).json({ error: "Erreur lors de de l/envoi du commentaire" });
   }
 };
 
@@ -36,12 +40,12 @@ exports.getAllComments = async (req, res) => {
     const comments = await Comment.findAll({
       include: [
         {
-          model: User,  // Inclure les données de l'utilisateur associé au commentaire
-          attributes: ['user_id', 'email'],  // Sélectionner seulement 'user_id' et 'email' pour l'utilisateur
+          model: User, // Inclure les données de l'utilisateur associé au commentaire
+          attributes: ["user_id", "email"], // Sélectionner seulement 'user_id' et 'email' pour l'utilisateur
         },
         {
-          model: Post,  // Inclure les données du post associé au commentaire
-          attributes: ['post_id', 'title', 'description', 'image'],  // Sélectionner 'post_id', 'title', 'description', 'image' pour le post
+          model: Post, // Inclure les données du post associé au commentaire
+          attributes: ["post_id", "title", "description", "image"], // Sélectionner 'post_id', 'title', 'description', 'image' pour le post
         },
       ],
     });
@@ -50,30 +54,31 @@ exports.getAllComments = async (req, res) => {
     const groupedComments = comments.reduce((acc, comment) => {
       // Récupérer l'ID du post auquel appartient le commentaire
       const postId = comment.Post.post_id;
-      
+
       // Si le post n'a pas encore été ajouté à l'accumulateur, l'ajouter
       if (!acc[postId]) {
         acc[postId] = {
-          post_id: comment.Post.post_id,  // Ajouter l'ID du post
-          title: comment.Post.title,  // Ajouter le titre du post
-          description: comment.Post.description,  // Ajouter la description du post
-          image: comment.Post.image,  // Ajouter l'image du post
-          comments: [],  // Initialiser un tableau pour les commentaires de ce post
+          post_id: comment.Post.post_id, // Ajouter l'ID du post
+          title: comment.Post.title, // Ajouter le titre du post
+          description: comment.Post.description, // Ajouter la description du post
+          image: comment.Post.image, // Ajouter l'image du post
+          comments: [], // Initialiser un tableau pour les commentaires de ce post
         };
       }
 
       // Ajouter le commentaire à l'entrée correspondante dans 'comments'
       acc[postId].comments.push({
-        comment_id: comment.comment_id,  // Ajouter l'ID du commentaire
-        content: comment.content,  // Ajouter le contenu du commentaire
-        created_at: comment.created_at,  // Ajouter la date de création du commentaire
-        user: {  // Ajouter les informations de l'utilisateur ayant écrit le commentaire
-          user_id: comment.User.user_id,  // ID de l'utilisateur
-          email: comment.User.email,  // Email de l'utilisateur
+        comment_id: comment.comment_id, // Ajouter l'ID du commentaire
+        content: comment.content, // Ajouter le contenu du commentaire
+        created_at: comment.created_at, // Ajouter la date de création du commentaire
+        user: {
+          // Ajouter les informations de l'utilisateur ayant écrit le commentaire
+          user_id: comment.User.user_id, // ID de l'utilisateur
+          email: comment.User.email, // Email de l'utilisateur
         },
       });
 
-      return acc;  // Retourner l'accumulateur pour la prochaine itération
+      return acc; // Retourner l'accumulateur pour la prochaine itération
     }, {});
 
     // Convertir l'objet regroupé en un tableau d'objets
@@ -84,7 +89,9 @@ exports.getAllComments = async (req, res) => {
   } catch (error) {
     // En cas d'erreur, l'afficher dans la console et retourner une réponse d'erreur avec un statut 500
     console.error("Erreur lors de la récupération des commentaires :", error);
-    res.status(500).json({ error: "Erreur lors de la récupération des commentaires" });
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des commentaires" });
   }
 };
 
@@ -178,21 +185,26 @@ exports.getCommentsByPostId = async (req, res) => {
 
     const comments = await Comment.findAll({
       where: { post_id: postId },
-      include: [{ model: User, attributes: ['username'] }],
-      order: [['created_at', 'DESC']]
+      include: [{ model: User, attributes: ["username"] }],
+      order: [["created_at", "DESC"]],
     });
 
     if (!comments.length) {
-      return res.status(404).json({ message: 'Aucun commentaire trouvé pour ce post.' });
+      return res
+        .status(404)
+        .json({ message: "Aucun commentaire trouvé pour ce post." });
     }
 
     res.status(200).json(comments);
   } catch (error) {
-    console.error('Erreur dans getCommentsByPostId:', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la récupération des commentaires.' });
+    console.error("Erreur dans getCommentsByPostId:", error);
+    res
+      .status(500)
+      .json({
+        error: "Erreur serveur lors de la récupération des commentaires.",
+      });
   }
 };
-
 
 exports.modifyComment = async (req, res) => {
   try {
@@ -203,7 +215,7 @@ exports.modifyComment = async (req, res) => {
     // Rechercher le commentaire
     const comment = await Comment.findOne({
       where: { comment_id: commentId },
-      include: [{ model: Post, attributes: ['user_id'] }] // Inclure le Post pour vérifier l'auteur
+      include: [{ model: Post, attributes: ["user_id"] }], // Inclure le Post pour vérifier l'auteur
     });
 
     // Vérifier si le commentaire existe
@@ -212,7 +224,7 @@ exports.modifyComment = async (req, res) => {
     }
 
     // Vérification des droits
-    const isAdmin = req.auth.roles.includes('admin');
+    const isAdmin = req.auth.roles.includes("admin");
     const isAuthor = comment.user_id === userId; // Auteur du commentaire
 
     if (!isAdmin && !isAuthor) {
@@ -252,35 +264,34 @@ exports.modifyComment = async (req, res) => {
 
 exports.deleteComment = async (req, res) => {
   try {
-      const { commentId } = req.params;
-      const userId = req.auth.userId;
-      const userRoles = req.auth.roles;
+    const { commentId } = req.params;
+    const userId = req.auth.userId;
+    const userRoles = req.auth.roles;
 
-      // Rechercher le commentaire avec son auteur
-      const comment = await Comment.findOne({
-          where: { comment_id: commentId },
-          include: [{ model: Post, attributes: ['user_id'] }]
+    // Rechercher le commentaire avec son auteur
+    const comment = await Comment.findOne({
+      where: { comment_id: commentId },
+      include: [{ model: Post, attributes: ["user_id"] }],
+    });
+
+    if (!comment) {
+      return res.status(404).json({ error: "Commentaire non trouvé." });
+    }
+
+    // Vérification des droits
+    const isAdmin = userRoles.includes("admin");
+    const isCommentAuthor = comment.user_id === userId;
+
+    if (!isAdmin && !isCommentAuthor) {
+      return res.status(403).json({
+        error: "Vous n'êtes pas autorisé à supprimer ce commentaire.",
       });
+    }
 
-      if (!comment) {
-          return res.status(404).json({ error: 'Commentaire non trouvé.' });
-      }
-
-      // Vérification des droits
-      const isAdmin = userRoles.includes('admin');
-      const isCommentAuthor = comment.user_id === userId;
-
-      if (!isAdmin && !isCommentAuthor) {
-          return res.status(403).json({ 
-              error: 'Vous n\'êtes pas autorisé à supprimer ce commentaire.' 
-          });
-      }
-
-      await comment.destroy();
-      res.status(200).json({ message: 'Commentaire supprimé avec succès.' });
-
+    await comment.destroy();
+    res.status(200).json({ message: "Commentaire supprimé avec succès." });
   } catch (error) {
-      console.error('Erreur lors de la suppression du commentaire :', error);
-      res.status(500).json({ error: 'Erreur serveur lors de la suppression.' });
+    console.error("Erreur lors de la suppression du commentaire :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression." });
   }
 };

@@ -1,24 +1,24 @@
-
-const sequelize = require('../configbdd/db'); 
-const { Model, DataTypes } = require('sequelize');
-
+const sequelize = require("../configbdd/db");
+const { Model, DataTypes } = require("sequelize");
 
 class Roles extends Model {}
 
-Roles.init({
-   
+Roles.init(
+  {
     role_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     role_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-}, {
+  },
+  {
     sequelize,
-    modelName: 'Roles',
-});
+    modelName: "Roles",
+  }
+);
 
 module.exports = Roles;
