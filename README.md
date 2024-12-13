@@ -49,7 +49,7 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 
 ```bash
 git clone https://github.com/Walidd35/SocialNetwork.git
-cd SocialNetwork
+cd back
 ```
 Configuration de l'/Environnement
 
