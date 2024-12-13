@@ -6,14 +6,14 @@
     "start": "node SERVERetAPP/server.js",
     "dev": "nodemon SERVERetAPP/server.js",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+     "test:coverage": "jest --config jest.config.js"
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "author": "WalidDev",
   "license": "ISC",
-  "description": "",
+  "description": "WorkUup is a corporate social network developed as part of a final year project.",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -24,7 +24,6 @@
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.3",
     "nodemon": "^3.1.7",
-    "npm": "^10.9.0",
     "sequelize": "^6.37.3"
   },
   "devDependencies": {

@@ -16,7 +16,7 @@ router.post("/auth/login", userCtrl.login);
 router.post("auth/logout",userCtrl.logout);
 router.get("/all/users", auth, authorizeRoles("admin"), userCtrl.getAllUsers);
 router.get( "/user/:id",auth,authorizeRoles("user", "admin"), (req, res, next) => {
-    // Permet à l'admin de voir tous les profils et aux utilisateurs de voir leur propre profil
+    //Permet à l'admin de voir tous les profils et aux u$sers de voir leur propre profil
     if (
       req.auth.roles.includes("admin") ||
       req.auth.userId === parseInt(req.params.id)
@@ -42,7 +42,7 @@ router.delete(
   auth,
   authorizeRoles("user", "admin"),
   (req, res, next) => {
-    // Permet à l'admin de supprimer n'importe quel compte et aux utilisateurs de supprimer leur propre compte
+    //Permet à l'admin de supprimer n'importe quel compte et aux utilisateurs de suprimer leur propre compte
     if (
       req.auth.roles.includes("admin") ||
       req.auth.userId === parseInt(req.params.id)
@@ -87,7 +87,7 @@ router.delete(
     try {
       const postId = req.params.id;
 
-      // Recherche du post dans la base de données
+      //recherche du post dans la base de données
       const post = await Post.findByPk(postId);
 
       if (!post) {
@@ -99,7 +99,7 @@ router.delete(
       const isAdmin = req.auth.roles.includes("admin"); // L'utilisateur est-il administrateur ?
 
       if (isOwner || isAdmin) {
-        // Si l'utilisateur est le propriétaire ou un administrateur, on peut supprimer le post
+        // Si l'utilisateur est le propriétaire ou un administrateur,il peut supprimer le post
         return postCtrl.deletePost(req, res, next);
       } else {
         return res.status(403).json({ message: "Accès non autorisé" });
@@ -122,7 +122,7 @@ router.put(
   "/comment/:commentId",
   auth,
   verifyOwnership(async (req) => {
-    return await Comments.findByPk(req.params.commentId); // Recherche le commentaire
+    return await Comments.findByPk(req.params.commentId); 
   }),
   cmtCtrl.modifyComment
 );

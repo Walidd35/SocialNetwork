@@ -21,7 +21,7 @@ exports.deleteUser = async (req, res) => {
 
 exports.signup = async (req, res) => {
   try {
-    // Vérifie si l'email existe déjà
+   
     const existingUser = await User.findOne({
       where: { email: req.body.email },
     });
@@ -29,19 +29,19 @@ exports.signup = async (req, res) => {
       return res.status(400).send({ message: "Cet email est déjà utilisé." });
     }
 
-    // Vérifie si le username existe déjà
+    
     let username = req.body.username;
     const existingUsername = await User.findOne({ where: { username } });
     if (existingUsername) {
-      // Génère un nouveau username en ajoutant un suffixe unique
+
       const randomSuffix = Math.floor(Math.random() * 10000); // Suffixe aléatoire
       username = `${username}_${randomSuffix}`;
     }
 
-    // Hashage du mot de passe
+   
     const hashedPassword = await bcrypt.hash(req.body.password, 8);
 
-    // Création de l'utilisateur
+ 
     const user = await User.create({
       username: username,
       email: req.body.email,
@@ -50,7 +50,7 @@ exports.signup = async (req, res) => {
 
     console.log("Utilisateur créé:", user);
 
-    // Gestion des rôles
+    //Gestion des roles
     if (req.body.roles) {
       const roles = await Role.findAll({
         where: {
@@ -65,7 +65,7 @@ exports.signup = async (req, res) => {
         roles,
       });
     } else {
-      // Assigner un rôle par défaut
+      //j'assigne un rôle par défaut
       const defaultRole = await Role.findOne({ where: { role_name: "user" } });
       if (!defaultRole) {
         return res
@@ -138,26 +138,25 @@ exports.updateUser = async (req, res) => {
   const userId = req.params.id;
 
   try {
-    // Vérifie si l'utilisateur existe
+    
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).send({ message: "Utilisateur non trouvé" });
     }
 
-    // Données à mettre à jour
+    //Donnees à mettre à jour
     const { username, email, password, roles } = req.body;
 
-    // Mise à jour des informations de l'utilisateur
+    
     if (username) user.username = username;
     if (email) user.email = email;
     if (password) {
       user.password = await bcrypt.hash(password, 8);
     }
 
-    // Enregistrer les modifications de l'utilisateur
+
     await user.save();
 
-    // Gestion des rôles si fourni
     if (roles && Array.isArray(roles)) {
       const roleInstances = await Role.findAll({
         where: {
@@ -174,7 +173,7 @@ exports.updateUser = async (req, res) => {
           .send({ message: "Certains rôles sont invalides." });
       }
 
-      // Met à jour les rôles de l'utilisateur
+      //Met à jour les roles de l'utilisateur
       await user.setRoles(roleInstances);
     }
 

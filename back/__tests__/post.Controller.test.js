@@ -25,14 +25,14 @@ describe("Tests Unitaires Post", () => {
       json: jest.fn().mockReturnThis(),
     };
     next = jest.fn();
-    // Clear all mocks
+   
     jest.clearAllMocks();
   });
 
   describe("createPost", () => {
     
     it("Doit pouvoir créer un post", async () => {
-      // Setup
+     
       req.body = {
         title: "Test Post",
         description: "Test Description",
@@ -49,10 +49,10 @@ describe("Tests Unitaires Post", () => {
 
       Post.create.mockResolvedValue(mockPost);
 
-      // Execute
+      
       await postController.createPost(req, res);
 
-      // Verify
+     
       expect(Post.create).toHaveBeenCalledWith({
         title: "Test Post",
         description: "Test Description",
@@ -64,13 +64,13 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit retourner 400 si titre ou description manquante", async () => {
-      // Setup
-      req.body = { title: "Test Post" }; // Missing description
-
-      // Execute
+      
+      req.body = { title: "Test Post" }; 
+      // manque la description exemple
+      
       await postController.createPost(req, res);
 
-      // Verify
+      
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Le titre et la description sont requis.",
@@ -79,17 +79,17 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit retourner 400 si token manquant", async () => {
-      // Setup
+     
       req.auth = null;
       req.body = {
         title: "Test Post",
         description: "Test Description",
       };
 
-      // Execute
+     
       await postController.createPost(req, res);
 
-      // Verify
+  
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "L'identifiant de l'utilisateur est manquant dans le token.",
@@ -97,7 +97,7 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit pouvoir gérer les erreurs", async () => {
-      // Setup
+ 
       req.body = {
         title: "Test Post",
         description: "Test Description",
@@ -105,10 +105,10 @@ describe("Tests Unitaires Post", () => {
       const error = new Error("Database error");
       Post.create.mockRejectedValue(error);
 
-      // Execute
+      
       await postController.createPost(req, res);
 
-      // Verify
+     
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         error: "Erreur lors de la création du post.",
@@ -120,7 +120,7 @@ describe("Tests Unitaires Post", () => {
   describe("getAllPosts", () => {
 
     it("Doit retourner tout les posts avec les infos des Users", async () => {
-      // Setup
+     
       const mockPosts = [
         {
           id: 1,
@@ -136,10 +136,10 @@ describe("Tests Unitaires Post", () => {
 
       Post.findAll.mockResolvedValue(mockPosts);
 
-      // Execute
+      
       await postController.getAllPosts(req, res);
 
-      // Verify
+      
       expect(Post.findAll).toHaveBeenCalledWith({
         include: [
           {
@@ -147,6 +147,7 @@ describe("Tests Unitaires Post", () => {
             attributes: ["username"],
           },
         ],
+        order: [["created_at", "DESC"]], 
       });
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith([
@@ -159,13 +160,12 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit pouvoir gérer les erreurs", async () => {
-      // Setup
+      
       Post.findAll.mockRejectedValue(new Error("Database error"));
 
-      // Execute
+     
       await postController.getAllPosts(req, res);
 
-      // Verify
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         message: "Une erreur est survenue lors de la récupération des posts.",
@@ -189,29 +189,29 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit retourner un post grâce a son ID", async () => {
-      // Setup
+      
       req.params.id = "1";
       const mockPost = { id: 1, title: "Test Post" };
       Post.findByPk.mockResolvedValue(mockPost);
 
-      // Execute
+     
       await postController.getPostById(req, res);
 
-      // Verify
+      // Verification
       expect(Post.findByPk).toHaveBeenCalledWith("1");
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockPost);
     });
 
     it("Doit retourner 404 si le post n/existe pas", async () => {
-      // Setup
+     
       req.params.id = "999";
       Post.findByPk.mockResolvedValue(null);
 
-      // Execute
+     
       await postController.getPostById(req, res);
 
-      // Verify
+      
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         message: "Post non disponible",
@@ -219,14 +219,14 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit retourner 500 si il une erreur base de données", async () => {
-      // Setup
+      
       req.params.id = "1";
       Post.findByPk.mockRejectedValue(new Error("Database error"));
 
-      // Execute
+      
       await postController.getPostById(req, res);
 
-      // Verify
+  
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         error: "Erreur lors de la récupération du post",
@@ -237,7 +237,7 @@ describe("Tests Unitaires Post", () => {
   describe("updatePost", () => {
 
     it("Doit pouvoir modifier un post", async () => {
-      // Setup
+     
       req.params.id = "1";
       req.body = {
         title: "Updated Title",
@@ -255,10 +255,10 @@ describe("Tests Unitaires Post", () => {
 
       Post.findByPk.mockResolvedValue(mockPost);
 
-      // Execute
+      
       await postController.updatePost(req, res);
 
-      // Verify
+      
       expect(mockPost.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -268,14 +268,14 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit retourner 404 si post inexistant", async () => {
-      // Setup
+      
       req.params.id = "999";
       Post.findByPk.mockResolvedValue(null);
 
-      // Execute
+      
       await postController.updatePost(req, res);
 
-      // Verify
+      
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Publication non trouvée.",
@@ -283,7 +283,7 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit retourner 403 si User non-autorisé", async () => {
-      // Setup
+      
       req.params.id = "1";
       req.auth.userId = "2"; // Different user
       req.auth.roles = ["user"]; // Not admin
@@ -295,10 +295,10 @@ describe("Tests Unitaires Post", () => {
 
       Post.findByPk.mockResolvedValue(mockPost);
 
-      // Execute
+      
       await postController.updatePost(req, res);
 
-      // Verify
+      
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
         error: "Accès refusé. Vous ne pouvez pas modifier cette publication.",
@@ -309,7 +309,7 @@ describe("Tests Unitaires Post", () => {
   describe("deletePost", () => {
 
     it("Doit pouvoir supprimer un post", async () => {
-      // Setup
+      
       req.params.id = "1";
       const mockPost = {
         id: 1,
@@ -317,10 +317,10 @@ describe("Tests Unitaires Post", () => {
       };
       Post.findByPk.mockResolvedValue(mockPost);
 
-      // Execute
+      
       await postController.deletePost(req, res);
 
-      // Verify
+      
       expect(mockPost.destroy).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -329,14 +329,14 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit retourner 404 si post inexistant", async () => {
-      // Setup
+      
       req.params.id = "999";
       Post.findByPk.mockResolvedValue(null);
 
-      // Execute
+      
       await postController.deletePost(req, res);
 
-      // Verify
+      
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
         error: "Publication non trouvée.",
@@ -344,14 +344,14 @@ describe("Tests Unitaires Post", () => {
     });
 
     it("Doit gérer les erreurs serveur", async () => {
-      // Setup
+      
       req.params.id = "1";
       Post.findByPk.mockRejectedValue(new Error("Database error"));
 
-      // Execute
+      
       await postController.deletePost(req, res);
 
-      // Verify
+      
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         error: "Erreur lors de la suppression de la publication.",

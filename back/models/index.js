@@ -1,25 +1,28 @@
 const { Sequelize } = require("sequelize");
+const sequelize = require('sequelize')
 require("dotenv").config({ path: "../.env" });
+const dbConfig = require('../configbdd/db');
+
 
 // Create Sequelize instance
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: "mysql",
-    port: process.env.DB_PORT || 3306,
-  }
-);
+// const sequelize = new Sequelize(
+//   process.env.DB_NAME,
+//   process.env.DB_USER,
+//   process.env.DB_PASSWORD,
+//   {
+//     host: process.env.DB_HOST,
+//     dialect: "mysql",
+//     port: process.env.DB_PORT || 3306,
+//   }
+// );
 
-// Import models
+// Import des models
 const User = require("./users.model");
 const Roles = require("./roles.model");
 const Posts = require("./posts.model");
 const Comments = require("./comments.model");
 
-// Define associations
+// associations
 Roles.belongsToMany(User, {
   through: "user_roles",
   foreignKey: "role_id",

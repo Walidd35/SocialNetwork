@@ -30,7 +30,7 @@ describe("Test unitaires Comment", () => {
 
   describe("createComment", () => {
     it("Doit pouvoir créer un commentaire", async () => {
-      // Setup
+
       req.body = { content: "Test Comment" };
       req.params.postId = "1";
       req.auth.userId = "1";
@@ -46,10 +46,10 @@ describe("Test unitaires Comment", () => {
       Post.findByPk.mockResolvedValue(mockPost);
       Comment.create.mockResolvedValue(mockComment);
 
-      // Execute
+      // Execution
       await commentController.createComment(req, res);
 
-      // Verify
+      // Verification
       expect(Post.findByPk).toHaveBeenCalledWith("1");
       expect(Comment.create).toHaveBeenCalledWith({
         content: "Test Comment",
@@ -64,80 +64,86 @@ describe("Test unitaires Comment", () => {
     });
 
     it("Doit retourner 404 si erreurs", async () => {
-      // Setup
+     
       req.body = { content: "Test Comment" };
       req.params.postId = "999";
       Post.findByPk.mockResolvedValue(null);
 
-      // Execute
+    
       await commentController.createComment(req, res);
 
-      // Verify
+      
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ error: "Post non trouvé" });
     });
   });
 
-  describe("getCommentById", () => {
-    it("Doit pouvoir retourner un commentaire par son ID", async () => {
-      // Setup
-      req.params.commentId = "1";
-      const mockComment = {
-        comment_id: 1,
-        content: "Test Comment",
-        User: { username: "testuser", email: "test@example.com" },
-        Post: {
+  describe('getCommentsByPostId', () => {
+    it('Doit retourner les commentaires pour un post donné', async () => {
+      // Préparation
+      const mockComments = [
+        {
+          id: 1,
+          content: 'Premier commentaire',
           post_id: 1,
-          title: "Test Post",
-          User: { email: "post@example.com" },
+          User: { username: 'user1' }
         },
-      };
+        {
+          id: 2,
+          content: 'Deuxième commentaire',
+          post_id: 1,
+          User: { username: 'user2' }
+        }
+      ];
 
-      Comment.findByPk.mockResolvedValue(mockComment);
+      Comment.findAll.mockResolvedValue(mockComments);
 
-      // Execute
-      await commentController.getCommentById(req, res);
+      // Execution
+      await commentController.getCommentsByPostId(req, res);
 
-      // Verify
-      expect(Comment.findByPk).toHaveBeenCalledWith("1", expect.any(Object));
+      // Verification
+      expect(Comment.findAll).toHaveBeenCalledWith({
+        where: { post_id: '1' },
+        include: [{ model: User, attributes: ["username"] }],
+        order: [["created_at", "DESC"]]
+      });
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(mockComment);
+      expect(res.json).toHaveBeenCalledWith(mockComments);
     });
 
-    it("should return 404 if comment not found", async () => {
-      // Setup
-      req.params.commentId = "999";
-      Comment.findByPk.mockResolvedValue(null);
+    it('Doit retourner 404 si aucun commentaire n\'est trouvé', async () => {
+      // Préparation
+      Comment.findAll.mockResolvedValue([]);
 
-      // Execute
-      await commentController.getCommentById(req, res);
+      // Execution
+      await commentController.getCommentsByPostId(req, res);
 
-      // Verify
+      // Verification
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Commentaire non trouvé",
+      expect(res.json).toHaveBeenCalledWith({ 
+        message: "Aucun commentaire trouvé pour ce post." 
       });
     });
 
-    it("should handle server errors", async () => {
-      // Setup
-      req.params.commentId = "1";
-      Comment.findByPk.mockRejectedValue(new Error("Database error"));
+    it('Doit gérer les erreurs serveur', async () => {
+      // Préparation
+      const errorMessage = new Error('Erreur de base de données');
+      Comment.findAll.mockRejectedValue(errorMessage);
 
-      // Execute
-      await commentController.getCommentById(req, res);
+      // Execution
+      await commentController.getCommentsByPostId(req, res);
 
-      // Verify
+      // Verification
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: "Erreur lors de la récupération du commentaire",
+        error: "Erreur serveur lors de la récupération des commentaires."
       });
     });
   });
 
   describe("modifyComment", () => {
     it("Doit pouvoir modifier un commentaire", async () => {
-      // Setup
+      
       req.params.commentId = "1";
       req.body = { content: "Updated Comment" };
       req.auth.userId = "1";
@@ -153,10 +159,10 @@ describe("Test unitaires Comment", () => {
 
       Comment.findOne.mockResolvedValue(mockComment);
 
-      // Execute
+      
       await commentController.modifyComment(req, res);
 
-      // Verify
+      // Verification
       expect(mockComment.update).toHaveBeenCalledWith({
         content: "Updated Comment",
         updated_at: expect.any(Date),
@@ -170,7 +176,7 @@ describe("Test unitaires Comment", () => {
     });
 
     it("Doit retourner 403 si User non-autorisé", async () => {
-      // Setup
+      
       req.params.commentId = "1";
       req.body = { content: "Updated Comment" };
       req.auth.userId = "2";
@@ -184,10 +190,10 @@ describe("Test unitaires Comment", () => {
 
       Comment.findOne.mockResolvedValue(mockComment);
 
-      // Execute
+    
       await commentController.modifyComment(req, res);
 
-      // Verify
+
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
         message: "Vous n'êtes pas autorisé à modifier ce commentaire",
@@ -197,7 +203,7 @@ describe("Test unitaires Comment", () => {
 
   describe("deleteComment", () => {
     it("Doit pouvoir supprimer un commentaire", async () => {
-      // Setup
+     
       req.params.commentId = "1";
       req.auth.userId = "1";
       req.auth.roles = ["user"];
@@ -211,10 +217,10 @@ describe("Test unitaires Comment", () => {
 
       Comment.findOne.mockResolvedValue(mockComment);
 
-      // Execute
+     
       await commentController.deleteComment(req, res);
 
-      // Verify
+      
       expect(mockComment.destroy).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -223,7 +229,7 @@ describe("Test unitaires Comment", () => {
     });
 
     it("Doit retourner 403 si User non-autorisé", async () => {
-      // Setup
+     
       req.params.commentId = "1";
       req.auth.userId = "2";
       req.auth.roles = ["user"];
@@ -236,10 +242,10 @@ describe("Test unitaires Comment", () => {
 
       Comment.findOne.mockResolvedValue(mockComment);
 
-      // Execute
+      
       await commentController.deleteComment(req, res);
 
-      // Verify
+      // Verification
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
         error: "Vous n'êtes pas autorisé à supprimer ce commentaire.",

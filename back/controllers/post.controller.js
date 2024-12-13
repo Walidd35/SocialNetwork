@@ -6,7 +6,7 @@ exports.createPost = async (req, res) => {
   try {
     const { title, description } = req.body;
     const imageUrl = req.file ? req.file.path : null;
-    console.log(req.body); // Affiche le contenu de la requête
+    console.log(req.body); 
 
     // Vérification que req.auth et req.auth.userId sont définis
     if (!req.auth || !req.auth.userId) {
@@ -17,16 +17,16 @@ exports.createPost = async (req, res) => {
         });
     }
 
-    const user_id = req.auth.userId; // Utilisation de userId extrait du token
+    const user_id = req.auth.userId; 
 
-    // Vérification des champs obligatoires
+    //Verification des champs obligatoires
     if (!title || !description) {
       return res
         .status(400)
         .json({ error: "Le titre et la description sont requis." });
     }
 
-    // Création du post avec l'ID utilisateur
+    
     const post = await Post.create({
       title,
       description,
@@ -34,7 +34,6 @@ exports.createPost = async (req, res) => {
       user_id, // Lier le userId au post
     });
 
-    // Réponse avec le post créé
     res.status(201).json(post);
   } catch (error) {
     console.error("Erreur lors de la création du post :", error);
@@ -106,13 +105,13 @@ exports.updatePost = async (req, res) => {
     const { title, description } = req.body;
     const imageUrl = req.file ? req.file.path : null;
 
-    // Recherche de la publication par son ID
+    //Recherche de la publication par son ID
     const post = await Post.findByPk(req.params.id);
     if (!post) {
       return res.status(404).json({ error: "Publication non trouvée." });
     }
 
-    // Vérification des rôles et de l'utilisateur
+    //Verification des rôles et de l'utilisateur
     if (post.user_id !== req.auth.userId && !req.auth.roles.includes("admin")) {
       return res
         .status(403)
@@ -125,10 +124,8 @@ exports.updatePost = async (req, res) => {
     post.title = title || post.title;
     post.description = description || post.description;
     post.image = imageUrl || post.image;
-    // Ne pas changer le user_id, car un utilisateur ne peut pas changer l'auteur du post
-    // post.user_id = user_id || post.user_id;  // Cette ligne est supprimée
 
-    // Sauvegarde de la publication
+
     await post.save();
     res
       .status(200)

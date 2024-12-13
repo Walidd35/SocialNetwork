@@ -47,7 +47,7 @@ const errorHandler = (error) => {
       process.exit(1);
       break;
     default:
-      throw error; // Lance d'autres erreurs
+      throw error; 
   }
 };
 

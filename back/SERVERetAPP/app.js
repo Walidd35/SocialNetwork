@@ -8,9 +8,9 @@ const cors = require("cors");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cors());
 
-//Assurez-vous de gérer les requêtes OPTIONS pour éviter le blocage
+//pour éviter le blocage
 app.options("*", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Remplace par l'URL de ton frontend si nécessaire
+  res.setHeader("Access-Control-Allow-Origin", "*"); 
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
@@ -23,7 +23,7 @@ app.options("*", (req, res) => {
   res.sendStatus(200);
 });
 
-// Middleware pour afficher les logs des requêtes
+//middleware pour afficher les logs des requêtes postman
 app.use((req, res, next) => {
   console.log(
     `Requête reçue avec la méthode: ${req.method}, à l'URL: ${req.url}`
@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 //   next();
 // });
 
-// Vérifier et créer le dossier "uploads" s'il n'existe pas
+// Vérifier et crée le dossier "uploads" s'il n'existe pas
 
 const uploadDir = path.join(__dirname, "..", "serveretapp", "uploads");
 if (!fs.existsSync(uploadDir)) {

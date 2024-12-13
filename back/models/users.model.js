@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize"); // J'importe les datatypes depuis Sequelize .
-const sequelize = require("../configbdd/db"); // J'importe l'instance Sequelize
+const { DataTypes } = require("sequelize"); 
+const sequelize = require("../configbdd/db"); 
 
 const User = sequelize.define(
   "User",

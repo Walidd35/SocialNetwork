@@ -13,14 +13,13 @@ module.exports = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(token, safetyKeyJwt);
-    console.log("Token décodé:", decodedToken); // Debug
+    console.log("Token décodé:", decodedToken); 
 
     if (!Array.isArray(decodedToken.roles)) {
       return res.status(400).json({
         message: "Les rôles dans le token ne sont pas valides.",
       });
     }
-
 
     req.auth = {
       userId: decodedToken.userId,
@@ -29,7 +28,7 @@ module.exports = (req, res, next) => {
         : [decodedToken.roles],
     };
 
-    console.log("req.auth:", req.auth); // Debug
+    console.log("req.auth:", req.auth);
     
     next();
   } catch (error) {
@@ -39,7 +38,7 @@ module.exports = (req, res, next) => {
     } else if (error.name === "JsonWebTokenError") {
       message = "Le token est invalide.";
     }
-    console.error("Erreur JWT:", error); // Debug
+    console.error("Erreur JWT:", error); 
     res.status(401).json({ message, error: error.message });
   }
 };

@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize"); // J'importe DataTypes depuis Sequelize .
-const sequelize = require("../configbdd/db"); // J'importe une instance de ma config bdd .
+const { DataTypes } = require("sequelize"); 
+const sequelize = require("../configbdd/db"); 
 
-// La fonction define permet de définir un modèle représentant une table SQL .
+// La fonction define permet de définir un modèle représentant une table 
 const Posts = sequelize.define(
   "Posts",
   {
@@ -16,23 +16,23 @@ const Posts = sequelize.define(
       allowNull: true,
     },
     title: {
-      type: DataTypes.STRING(255), // Je limite à 255 caractères pour le titre .
+      type: DataTypes.STRING(255), 
       allowNull: false,
     },
     description: {
-      type: DataTypes.TEXT, // J'utilise DataTypes.TEXT pour des desriptions longues .
+      type: DataTypes.TEXT, // J'utilise TEXT pour des desriptions longues 
       allowNull: false,
     },
     user_id: {
-      // Ajout du champ user_id dans le modèle
+  
       type: DataTypes.INTEGER,
-      allowNull: false, // Correspond à "YES" dans votre schéma
+      allowNull: false,
       references: {
-        model: "Users", // Nom de la table des utilisateurs
-        key: "user_id", // Nom de la clé primaire dans Users
+        model: "Users", 
+        key: "user_id", 
       },
     },
-    createdAt: { field: "created_at", type: DataTypes.DATE }, // Mappe 'created_at' à 'createdAt'
+    createdAt: { field: "created_at", type: DataTypes.DATE }, 
     updatedAt: { field: "updated_at", type: DataTypes.DATE },
   },
   {

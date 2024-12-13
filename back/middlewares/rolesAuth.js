@@ -23,7 +23,8 @@ const authorizeRoles = (...allowedRoles) => {
     next();
   };
 };
-//Middleware pour vérifier les proprietaire des ressources
+
+//Middleware pour vérifier les proprietaire des donnees
 
 const verifyOwnership = (getResource) => {
   return async (req, res, next) => {
@@ -41,7 +42,7 @@ const verifyOwnership = (getResource) => {
         return res.status(403).json({ message: "Accès refusé." });
       }
 
-      next(); // Autorisation validée
+      next(); //autorisation validée
     } catch (error) {
       console.error("Erreur dans verifyOwnership:", error);
       res.status(500).json({ message: "Erreur serveur" });

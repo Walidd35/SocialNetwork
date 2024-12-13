@@ -5,6 +5,7 @@ const { User, Roles: Role } = require("../models/index");
 const userController = require("../controllers/user.controller");
 
 // Configuration des mocks pour les modèles et Sequelize
+
 // Cela permet de simuler le comportement de la base de données
 jest.mock("../models/index", () => {
   const actualSequelize = jest.requireActual("sequelize");
@@ -23,7 +24,7 @@ jest.mock("../models/index", () => {
           or: Symbol("or"),
           gt: Symbol("gt"),
           lt: Symbol("lt"),
-          // Add other operators you might use
+          
         },
       },
     },
@@ -33,7 +34,7 @@ jest.mock("../models/index", () => {
       destroy: jest.fn(),
       create: jest.fn().mockImplementation((data) => ({
         ...data,
-        setRoles: jest.fn(), // Add this line
+        setRoles: jest.fn(), 
         user_id: 1,
       })),
       findOne: jest.fn(),
@@ -173,6 +174,7 @@ describe("Test Unitaire User", () => {
       );
     });
   });
+
   // Tests pour la fonction modifier user
   describe("updateUser", () => {
     it("Doit modifier l/user avec succès", async () => {
@@ -236,6 +238,7 @@ describe("Test Unitaire User", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
   });
+
   // Tests pour la fonction Login
   describe("login", () => {
     it("Devrait se connecter avec succès et renvoyer un token", async () => {
@@ -268,8 +271,9 @@ describe("Test Unitaire User", () => {
         message: "Identifiants incorrects",
       });
     });
-    // Ajoutez d'autres tests pour les cas d'erreur et de mot de passe incorrect
+    // il faut que j'ajoute d'autres tests pour les cas d'erreur et de mot de passe incorrect
   });
+  
   // Tests pour la fonction getAllUser
   describe("getAllUsers", () => {
     it("Doit retourner tout les users", async () => {
