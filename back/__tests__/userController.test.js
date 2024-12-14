@@ -249,6 +249,7 @@ describe("Test Unitaire User", () => {
         password: "hashedPassword",
         roles: [{ role_name: "user" }],
       });
+      
       bcrypt.compare.mockResolvedValue(true);
       jwt.sign.mockReturnValue("token");
 
@@ -273,7 +274,7 @@ describe("Test Unitaire User", () => {
     });
     // il faut que j'ajoute d'autres tests pour les cas d'erreur et de mot de passe incorrect
   });
-  
+
   // Tests pour la fonction getAllUser
   describe("getAllUsers", () => {
     it("Doit retourner tout les users", async () => {

@@ -1,5 +1,6 @@
 const Comment = require("../models/comments.model"); 
 const Post = require("../models/posts.model"); 
+const User = require('../models/users.model');
 
 exports.createComment = async (req, res) => {
   try {
@@ -102,7 +103,12 @@ exports.getCommentsByPostId = async (req, res) => {
 
     const comments = await Comment.findAll({
       where: { post_id: postId },
-      include: [{ model: User, attributes: ["username"] }],
+      include: [
+        {
+          model: User,  // Assure-toi que le modèle User est correctement inclus
+          attributes: ['username'],  // Inclure seulement le champ 'username' de User
+        }
+      ],
       order: [["created_at", "DESC"]],
     });
 
@@ -114,12 +120,10 @@ exports.getCommentsByPostId = async (req, res) => {
 
     res.status(200).json(comments);
   } catch (error) {
-    console.error("Erreur dans getCommentsByPostId:", error);
-    res
-      .status(500)
-      .json({
-        error: "Erreur serveur lors de la récupération des commentaires.",
-      });
+    console.error("Erreur dans getCommentsByPostId:", error.message);
+    res.status(500).json({
+      error: `Erreur serveur lors de la récupération des commentaires. ${error.message}`,
+    });
   }
 };
 

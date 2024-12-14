@@ -1,6 +1,8 @@
 const { describe, it, expect, beforeEach } = require("@jest/globals");
 const Comment = require("../models/comments.model");
 const Post = require("../models/posts.model");
+const User = require('../models/users.model'); 
+
 const commentController = require("../controllers/comment.controller");
 
 // Mock des modèles
@@ -78,6 +80,69 @@ describe("Test unitaires Comment", () => {
     });
   });
 
+  // describe('getCommentsByPostId', () => {
+  //   it('Doit retourner les commentaires pour un post donné', async () => {
+  //     // Préparation
+  //     const mockComments = [
+  //       {
+  //         id: 1,
+  //         content: 'Premier commentaire',
+  //         post_id: 1,
+  //         User: { username: 'user1' }
+  //       },
+  //       {
+  //         id: 2,
+  //         content: 'Deuxième commentaire',
+  //         post_id: 1,
+  //         User: { username: 'user2' }
+  //       }
+  //     ];
+
+  //     Comment.findAll.mockResolvedValue(mockComments);
+
+  //     // Execution
+  //     await commentController.getCommentsByPostId(req, res);
+
+  //     // Verification
+  //     expect(Comment.findAll).toHaveBeenCalledWith({
+  //       where: { post_id: '1' },
+  //       include: [{ model: User, attributes: ["username"] }],
+  //       order: [["created_at", "DESC"]]
+  //     });
+  //     expect(res.status).toHaveBeenCalledWith(200);
+  //     expect(res.json).toHaveBeenCalledWith(mockComments);
+  //   });
+
+  //   it('Doit retourner 404 si aucun commentaire n\'est trouvé', async () => {
+  //     // Préparation
+  //     Comment.findAll.mockResolvedValue([]);
+
+  //     // Execution
+  //     await commentController.getCommentsByPostId(req, res);
+
+  //     // Verification
+  //     expect(res.status).toHaveBeenCalledWith(404);
+  //     expect(res.json).toHaveBeenCalledWith({ 
+  //       message: "Aucun commentaire trouvé pour ce post." 
+  //     });
+  //   });
+
+  //   it('Doit gérer les erreurs serveur', async () => {
+  //     // Préparation
+  //     const errorMessage = new Error('Erreur de base de données');
+  //     Comment.findAll.mockRejectedValue(errorMessage);
+
+  //     // Execution
+  //     await commentController.getCommentsByPostId(req, res);
+
+  //     // Verification
+  //     expect(res.status).toHaveBeenCalledWith(500);
+  //     expect(res.json).toHaveBeenCalledWith({
+  //       error: "Erreur serveur lors de la récupération des commentaires."
+  //     });
+  //   });
+  // });
+
   describe('getCommentsByPostId', () => {
     it('Doit retourner les commentaires pour un post donné', async () => {
       // Préparation
@@ -95,13 +160,21 @@ describe("Test unitaires Comment", () => {
           User: { username: 'user2' }
         }
       ];
-
+  
+      // Mock de la méthode findAll pour retourner les commentaires simulés
       Comment.findAll.mockResolvedValue(mockComments);
-
+  
+      // Exécution de la fonction avec un postId simulé dans req.params
+      const req = { params: { postId: '1' } }; // Assurer que postId est bien dans req.params
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+  
       // Execution
       await commentController.getCommentsByPostId(req, res);
-
-      // Verification
+  
+      // Vérification
       expect(Comment.findAll).toHaveBeenCalledWith({
         where: { post_id: '1' },
         include: [{ model: User, attributes: ["username"] }],
@@ -110,37 +183,51 @@ describe("Test unitaires Comment", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockComments);
     });
-
+  
     it('Doit retourner 404 si aucun commentaire n\'est trouvé', async () => {
       // Préparation
       Comment.findAll.mockResolvedValue([]);
-
+  
+      // Exécution de la fonction avec un postId simulé dans req.params
+      const req = { params: { postId: '1' } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+  
       // Execution
       await commentController.getCommentsByPostId(req, res);
-
-      // Verification
+  
+      // Vérification
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ 
-        message: "Aucun commentaire trouvé pour ce post." 
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Aucun commentaire trouvé pour ce post."
       });
     });
-
+  
     it('Doit gérer les erreurs serveur', async () => {
-      // Préparation
+      // Préparation de l'erreur simulée
       const errorMessage = new Error('Erreur de base de données');
       Comment.findAll.mockRejectedValue(errorMessage);
-
+  
+      // Exécution de la fonction avec un postId simulé dans req.params
+      const req = { params: { postId: '1' } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+  
       // Execution
       await commentController.getCommentsByPostId(req, res);
-
-      // Verification
+  
+      // Vérification de l'erreur serveur
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: "Erreur serveur lors de la récupération des commentaires."
+        error: "Erreur serveur lors de la récupération des commentaires. Erreur de base de données"
       });
     });
   });
-
+  
   describe("modifyComment", () => {
     it("Doit pouvoir modifier un commentaire", async () => {
       

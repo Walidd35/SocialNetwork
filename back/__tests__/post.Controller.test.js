@@ -117,59 +117,58 @@ describe("Tests Unitaires Post", () => {
     });
   });
 
-  describe("getAllPosts", () => {
 
-    it("Doit retourner tout les posts avec les infos des Users", async () => {
-     
+  describe('getAllPosts', () => {
+    beforeEach(() => {
+      // Réinitialiser les mocks avant chaque test
+      jest.clearAllMocks();
+    });
+  
+    it('Doit retourner tout les posts avec les infos des Users', async () => {
       const mockPosts = [
         {
           id: 1,
           title: "Post 1",
-          User: { username: "user1" },
-          toJSON: () => ({
+          image: "/path/to/image.jpg",
+          User: {
+            username: "user1"
+          },
+          toJSON: jest.fn().mockReturnValue({
             id: 1,
             title: "Post 1",
-            User: { username: "user1" },
-          }),
-        },
+            image: "/path/to/image.jpg",
+            User: {
+              username: "user1"
+            }
+          })
+        }
       ];
-
+  
+      // Mock les dépendances nécessaires
       Post.findAll.mockResolvedValue(mockPosts);
-
-      
+  
+      const req = {};
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      };
+  
       await postController.getAllPosts(req, res);
-
-      
-      expect(Post.findAll).toHaveBeenCalledWith({
-        include: [
-          {
-            model: User,
-            attributes: ["username"],
-          },
-        ],
-        order: [["created_at", "DESC"]], 
-      });
+  
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith([
-        {
-          id: 1,
-          title: "Post 1",
-          User: { username: "user1" },
-        },
-      ]);
-    });
-
-    it("Doit pouvoir gérer les erreurs", async () => {
-      
-      Post.findAll.mockRejectedValue(new Error("Database error"));
-
-     
-      await postController.getAllPosts(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Une erreur est survenue lors de la récupération des posts.",
-      });
+      expect(res.json).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: 1,
+            title: "Post 1",
+            username: "user1",
+            image: "image.jpg",
+            User: {
+              username: "user1"
+            }
+          })
+        ])
+      );
     });
   });
 

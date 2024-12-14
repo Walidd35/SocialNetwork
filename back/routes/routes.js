@@ -116,7 +116,7 @@ router.delete(
 
 // Route pour Commentaires
 router.post("/create/:postId/comment", auth, cmtCtrl.createComment);
-router.get("/all/comments", auth, cmtCtrl.getAllComments);
+router.get("/all/comments",auth, cmtCtrl.getAllComments);
 router.get("/posts/:postId/comments", auth, cmtCtrl.getCommentsByPostId);
 router.put(
   "/comment/:commentId",
