@@ -22,7 +22,7 @@ Ce backend utilise une architecture **MVC**, **Docker** pour la containerisation
 
 Ce projet utilise les technologies suivantes :
 
-- **Node.js** : Framework JavaScript pour le développement backend.
+- **Node.js** : Environement d'execution JavaScript coté server pour le développement backend.
 - **Express.js** : Framework web minimaliste pour la gestion des routes.
 - **Sequelize** : ORM pour interagir avec la base de données MySQL.
 - **MySQL** : Base de données relationnelle pour le stockage des données.
@@ -39,13 +39,12 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 - [Node.js](https://nodejs.org/)
 - [Docker](https://www.docker.com/) (et Docker Compose)
 - [MySQL](https://www.mysql.com/) ou un service compatible Docker
-- [Git](https://git-scm.com/)
 
 ---
 
 ## Installation
 
-### Cloner le Repository
+### Cloner le Repo
 
 ```bash
 git clone https://github.com/Walidd35/SocialNetwork.git
@@ -88,10 +87,10 @@ Routes Principales
 
     POST /auth/signup : Inscription d'un nouvel utilisateur.
     POST /auth/login : Authentification d'un utilisateur.
-    GET /posts : Récupérer tous les posts.
-    POST /all/posts : Créer un nouveau post.
-    GET /post/:id : Récupérer un post par son ID.
-    PUT /post/:id : Modifier un post.
+    GET  /all/posts : Récupérer tous les posts.
+    POST /post : Créer un nouveau post.
+    GET  /post/:id : Récupérer un post par son ID.
+    PUT  /post/:id : Modifier un post.
     DELETE /post/:id : Supprimer un post.
 
 Contribuer
