@@ -6,3 +6,4 @@ mysql-data/
 .git/
 .dockerignore
 .DS_Store
+**/uploads/
